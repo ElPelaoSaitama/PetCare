@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Modulos.app_clinica.urls',
-    'Modulos.app_petstore.urls2',
+    'app_clinica.urls',
 ]
 
 MIDDLEWARE = [
