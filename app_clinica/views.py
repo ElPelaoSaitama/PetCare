@@ -4,3 +4,7 @@ from django.http import HttpResponse
 
 def home(request):
     return render(request,'app/home.html')
+
+def agendamiento(request):
+    return render(request, 'app/agendamiento.html')
+    
