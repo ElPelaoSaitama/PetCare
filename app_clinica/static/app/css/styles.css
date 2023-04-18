@@ -32,11 +32,11 @@ body{
     bottom: 0;
     right: 0;
     left: 0;
-  }
+}
 
-  .modal-body{
+.modal-body{
     padding: 0;
-  }
+}
 
 .btn-close{
     position: absolute;
@@ -55,8 +55,8 @@ body{
     padding-left: 0;
     border: 1px solid #fff;
     border-radius: 0;
-  }
-  .form-area .btn {
+}
+.form-area .btn {
     width: 100%;
     font-weight: 800;
     background-color: #fff;
@@ -70,32 +70,32 @@ body{
     letter-spacing: 2px;
     border-radius: 50px;
 }
-  .form-area .btn:hover {
+.form-area .btn:hover {
     background-color: inherit;
     color: #fff;
     border-color: #fff;
-  }
-  .form-area p {
+}
+.form-area p {
     text-align: center;
     padding-top: 2em;
     color: #fff;
-  }
-  .form-area p a {
+}
+.form-area p a {
     color: #e1e1e1;
     text-decoration: none;
-  }
-  .form-area p a:hover {
+}
+.form-area p a:hover {
     color: #fff;
-  }
+}
 
-  @media (max-width: 600px){
+@media (max-width: 600px){
     .form-area{
-        padding: 1.5em;
-    }
-    .form-area h1{
-        font-size: 18px;
-    }
-  }
+    padding: 1.5em;
+}
+.form-area h1{
+    font-size: 18px;
+}
+}
 
 
 
