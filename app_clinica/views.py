@@ -12,7 +12,10 @@ def agendamiento(request):
     return render(request, 'app/home.html')
 
 def login(request):
-    return render(request,'registration/login.html'), redirect('app/home.html')
+    return render(request,'registration/login.html')
+
+def register(request):
+    return render(request, 'registration/register.html')
 
 def salir(request):
     logout(request)
