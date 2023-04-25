@@ -10,26 +10,75 @@
 {% block contenido %}
 <main id="main">
 
-    <!-- ======= Breadcrumbs ======= -->
-    <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
+  <!-- ======= Contact Section ======= -->
+  <section id="contact" class="contact">
+    <div class="container" data-aos="fade-up">
 
-        <ol>
-          <li><a href="index.html">Home</a></li>
-          <li>Inner Page</li>
-        </ol>
-        <h2>Inner Page</h2>
+      <div class="section-title">
+        <h2>Agendamiento</h2>
+        <p>No esperes a que tu mascota presente algún síntoma para llevarla a la consulta. Agenda hoy mismo una cita con nuestros veterinarios altamente capacitados y con amplia experiencia para asegurarte de que tu peludo amigo reciba la mejor atención posible. En nuestra clínica, creemos en la prevención y la detección temprana como la clave para una vida saludable y feliz para tus mascotas.</p>
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-5 d-flex align-items-stretch">
+          <div class="info">
+            <div class="address">
+              <i class="bi bi-geo-alt"></i>
+              <h4>Dirección:</h4>
+              <p>Padre Alonso de Ovalle 1586, Santiago, Región Metropolitana</p>
+            </div>
+
+            <div class="email">
+              <i class="bi bi-envelope"></i>
+              <h4>Correo Electronico:</h4>
+              <p>Clinica@petcare.cl</p>
+            </div>
+
+            <div class="phone">
+              <i class="bi bi-phone"></i>
+              <h4>Telefono:</h4>
+              <p>+569 84611224</p>
+            </div>
+
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.07769115371!2d-70.66017472438098!3d-33.44728237339068!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c507f91be917%3A0xcfac72a68dd4b986!2sDuoc%20UC%20-%20Sede%20Padre%20Alonso%20de%20Ovalle!5e0!3m2!1ses!2scl!4v1682380208178!5m2!1ses!2scl" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+
+        </div>
+
+        <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
+          <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="name">Nombre</label>
+                <input type="text" name="name" class="form-control" id="name" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="name">Correo Electronico</label>
+                <input type="email" class="form-control" name="email" id="email" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="name">Asunto</label>
+              <input type="text" class="form-control" name="subject" id="subject" required>
+            </div>
+            <div class="form-group">
+              <label for="name">Mensaje</label>
+              <textarea class="form-control" name="message" rows="10" required></textarea>
+            </div>
+            <div class="my-3">
+              <div class="loading">Cargando</div>
+              <div class="error-message"></div>
+              <div class="sent-message">Tú Cita a sido agendada. Gracias!</div>
+            </div>
+            <div class="text-center"><button type="submit">Agendar</button></div>
+          </form>
+        </div>
 
       </div>
-    </section><!-- End Breadcrumbs -->
 
-    <section class="inner-page">
-      <div class="container">
-        <p>
-          Example inner page template
-        </p>
-      </div>
-    </section>
+    </div>
+  </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
 {% endblock %}
