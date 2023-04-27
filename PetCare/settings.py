@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "petcare",
+        "NAME": "veterinaria",
         "USER": "petcare",
         "PASSWORD": "SuperUsuario1#",
         "HOST": "veterinariapetcare.mysql.database.azure.com",
@@ -133,5 +133,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os
+
+# Login con Email
+AUTHENTICATION_BACKENDS = [
+    'app_clinica.auth.Email_OR_Username',
+]
 
 
