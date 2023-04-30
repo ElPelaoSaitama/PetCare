@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app_clinica.apps.AppClinicaConfig',
-    'crispy_forms'
-
+    'crispy_forms',
 ]
+
+CRISPY_TEMPLATE_PACK = 'boostrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "veterinaria",
+        "NAME": "petcare",
         "USER": "petcare",
         "PASSWORD": "SuperUsuario1#",
         "HOST": "veterinariapetcare.mysql.database.azure.com",

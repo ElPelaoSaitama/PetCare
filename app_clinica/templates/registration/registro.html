@@ -50,39 +50,25 @@
               <div class="container" data-aos="fade-up">
                 <div class="card">
                     <div class="card-header section-title">
-                        <h2>Ingreso a PetCare</h2>
+                        <h2>Registro de usuario</h2>
                     </div>
                     <br>
                     <div class="card-body">
                         <form action="" method="post">
                             {% csrf_token %}
                             <div class="form-grup">
-      
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text icon-size"><i class="fas fa-user"></i></span>
-                                    </div>
-                                    <input type="email" class="form-control" id="username" name="username" placeholder="Ingresa tu email" required>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="form-group mb-3">
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text icon-size"><i class="fas fa-lock"></i></span>
-                                  </div>
-                                  <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
-                                </div>
-                              </div>
+                                {{form}}
+
                               <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Ingresar</button>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Registrar</button>
                               </div>
                         </form>
                     </div>
+                    <br>
                     <div class="card-footer">
-                        <p>¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesion aquí</a></p>
                         <p ><a href="#" onclick="history.back()">Volver al atras</a></p>
-                        <p>¿Eres colaborador? <a href="{% url 'home' %}">Inicio colaborador</a></p>
                         <!-- <button type="button" onclick="history.back()" class="btn-back">Volver</button> -->
 
                       </div>
