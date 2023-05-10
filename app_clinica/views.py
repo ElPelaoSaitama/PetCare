@@ -8,10 +8,9 @@ from .forms import CustomUserCreationForm
 
 def home(request):
     return render(request,'app/home.html')
-
-@login_required
+#@login_required
 def agendamiento(request):
-    return render(request, 'app/home.html')
+    return render(request, 'app/agendamiento.html')
 
 def login(request):
     return render(request,'registration/login.html')

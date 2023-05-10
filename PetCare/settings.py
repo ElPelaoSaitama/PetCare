@@ -34,6 +34,7 @@ LOGOUT_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app_clinica.apps.AppClinicaConfig',
+    'app_tienda.apps.AppTiendaConfig',
     'crispy_forms',
+    'colorfield',
 ]
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 CRISPY_TEMPLATE_PACK = 'boostrap4'
 
@@ -140,4 +146,6 @@ AUTHENTICATION_BACKENDS = [
     'app_clinica.auth.Email_OR_Username',
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 

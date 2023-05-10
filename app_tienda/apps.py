@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class AppPetstoreConfig(AppConfig):
+class AppTiendaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'app_petStore'
+    name = 'app_tienda'
+    verbose_name = "Pet Store"
