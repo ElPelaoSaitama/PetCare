@@ -1,0 +1,41 @@
+{% extends 'app/baseTienda.html'  %}
+{% load static %}
+
+{% block contenido %}
+
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <ol>
+          <li><a href="{% url 'app_clinica:home' %}">Inicio</a></li>
+          <li><a href="{% url 'app_tienda:categorias' %}">Catalogos</a></li>
+          <li>Catalogo Gatos</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="section-title">
+        <h2>Productos</h2>
+      </div>
+
+        {% load humanize %}
+        <div class="container-fluid bg-trasparent my-4 p-3" style="position: relative;">
+           <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
+            {% for p in productos %}
+              <div class="col">
+                 <div class="card h-100 shadow-sm">
+                    {% if p.imagen %}
+                    <img src="{{ p.imagen.url }}" alt="">
+                    {% endif %}
+                    <div class="card-body">
+                       <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio |intcomma }}</span> </div>
+                       <h5 class="card-title">{{ p.nombre | title }}</h5>
+                       <div class="text-center my-4"> <a href="#" class="btn btn-success">Comprar</a> </div>
+                    </div>
+                 </div>
+              </div>
+              {% endfor %}
+           </div> 
+        </div>
+
+ 
+{% endblock %}

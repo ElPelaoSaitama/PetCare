@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'app_tienda.apps.AppTiendaConfig',
     'crispy_forms',
     'colorfield',
+    'django.contrib.humanize',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -86,7 +87,7 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "petcare",
@@ -94,6 +95,13 @@ DATABASES = {
         "PASSWORD": "SuperUsuario1#",
         "HOST": "veterinariapetcare.mysql.database.azure.com",
         "PORT": "3306",
+    }
+}"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'petcaresqlite',
     }
 }
 
@@ -120,9 +128,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+USE_L10N = True
 
-TIME_ZONE = 'UTC'
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = '.'
+DECIMAL_SEPARATOR = ','
+
+LANGUAGE_CODE = 'es-ES'
+
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 

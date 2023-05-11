@@ -27,6 +27,7 @@ class Producto(models.Model):
     precio = models.IntegerField()
     stock = models.IntegerField()
     descripcion = models.TextField()
+    marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     subCategoria = models.ForeignKey(SubCategoria, on_delete=models.PROTECT)
     imagen = models.ImageField(upload_to="productos", null=True)

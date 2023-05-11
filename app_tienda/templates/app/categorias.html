@@ -1,0 +1,71 @@
+{% extends 'app/baseTienda.html'  %}
+{% load static %}
+
+{% block contenido %}
+
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <ol>
+          <li><a href="{% url 'app_clinica:home' %}">Inicio</a></li>
+          <li>Catalogos</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="section-title">
+        <h2>Catalogos</h2>
+        <p>Explora nuestra seleccion de productos para mascotas</p>
+      </div>
+
+      <div class="container-fluid bg-trasparent my-4 p-3" style="position: relative;">
+        <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
+           <div class="col">
+              <div class="card h-100 shadow-sm">
+                 <img src="{% static 'app/img/catalogos/CATALOGO-PERRO-300x191.webp' %}" class="card-img-top" alt="..."> 
+                 <div class="card-body">
+                    <h5 class="card-title">Encuentra todo lo que necesitas para consentir a tu fiel amigo canino. Desde alimentos de la mejor calidad hasta camas cómodas y juguetes divertidos. ¡Mantén a tu perro feliz y saludable con nuestra amplia variedad de productos!</h5>
+                 </div>
+                 <div class="card-footer">
+                  <div class="d-grid gap-2 my-4"> <a href="{% url 'app_tienda:catalogoPerros' %}" class="btn btn-warning">Ver Catalogo</a></div>
+                 </div>
+              </div>
+           </div>
+           <div class="col">
+              <div class="card h-100 shadow-sm">
+                 <img src="{% static 'app/img/catalogos/CATALOGO-GATO.webp' %}" class="card-img-top" alt="..."> 
+                 <div class="card-body">
+                    <h5 class="card-title">Descubre nuestra selección de productos de alta calidad para cuidar a tu gato. Desde alimentos de la mejor calidad hasta rascadores, camas y juguetes divertidos. ¡Mantén a tu gato feliz y saludable con nuestra amplia variedad de productos!</h5>
+                 </div>
+                 <div class="card-footer">
+                  <div class="d-grid gap-2 my-4"> <a href="{% url 'app_tienda:catalogoGatos' %}" class="btn btn-warning">Ver Catalogo</a></div>
+                 </div>
+              </div>
+           </div>
+           <div class="col">
+              <div class="card h-100 shadow-sm">
+                 <img src="{% static 'app/img/catalogos/CATALOGO-EXOTICOS.webp' %}" class="card-img-top" alt="..."> 
+                 <div class="card-body">
+                    <h5 class="card-title">Si tienes un animal exótico en casa, en PetCare encontrarás todo lo necesario para cuidarlo. Desde alimentos especializados hasta terrarios y accesorios de decoración. ¡Mantén a tu mascota exótica feliz y saludable con nuestra amplia variedad de productos!</h5>
+                 </div>
+                 <div class="card-footer">
+                  <div class="d-grid gap-2 my-4"> <a href="{% url 'app_tienda:catalogoExoticos' %}" class="btn btn-warning">Ver Catalogo</a></div>
+                 </div>
+              </div>
+           </div>
+           <div class="col">
+              <div class="card h-100 shadow-sm">
+                 <img src="{% static 'app/img/catalogos/FRAMACIA.webp' %}" class="card-img-top" alt="..."> 
+                 <div class="card-body">
+                    <h5 class="card-title">La farmacia de PetCare es un lugar donde podrás encontrar una amplia variedad de medicamentos, suplementos y productos de cuidado para la salud de tu mascota. Contamos con personal capacitado y profesional que te brindará la asesoría necesaria para que puedas adquirir los productos adecuados para tu mascota. Además, nos aseguramos de trabajar con los mejores proveedores para garantizarte productos de alta calidad. En la farmacia de PetCare podrás encontrar todo lo necesario para cuidar de la salud y bienestar de tu mascota.</h5>
+                 </div>
+                 <div class="card-footer">
+                  <div class="d-grid gap-2 my-4"> <a href="{% url 'app_tienda:catalogoFarmacia' %}" class="btn btn-warning">Ver Catalogo</a></div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+
+
+
+{% endblock %}
