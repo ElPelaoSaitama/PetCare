@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Producto
+from .forms import ProductoForm
 
 #Pagina de categorias de la tienda
 def categorias(request):
@@ -32,3 +33,11 @@ def catFarmacia(request):
         'productos': productos,
     }
     return render(request, 'app/catFarmacia.html', data)
+
+def agregar_producto(request):
+
+    data = {
+        'form': ProductoForm()
+    }
+    
+    return render(request, 'app/producto/agregar.html', data)

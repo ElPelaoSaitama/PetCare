@@ -8,6 +8,7 @@ urlpatterns = [
     path('catalogoGatos/', views.catGatos, name="catalogoGatos" ),
     path('catalogoExoticos/', views.catExoticos, name="catalogoExoticos" ),
     path('catalogoFarmacia/', views.catFarmacia, name="catalogoFarmacia" ),
+    path('agregar-producto/', views.agregar_producto, name="agregar_producto" ),
     
 
 ]
