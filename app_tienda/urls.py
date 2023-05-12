@@ -9,6 +9,7 @@ urlpatterns = [
     path('catalogoExoticos/', views.catExoticos, name="catalogoExoticos" ),
     path('catalogoFarmacia/', views.catFarmacia, name="catalogoFarmacia" ),
     path('agregar-producto/', views.agregar_producto, name="agregar_producto" ),
+    path('listar-producto/', views.listar_productos, name="listar_productos" ),
     
 
 ]
