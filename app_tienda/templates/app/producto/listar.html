@@ -12,6 +12,7 @@
                 <th>Precio</th>
                 <th>Marca</th>
                 <th>Categoria</th>
+                <th>Opciones</th>
         
             </tr>
         
@@ -22,6 +23,10 @@
                 <td>${{ p.precio | intcomma }}</td>
                 <td>{{ p.marca | title }}</td>
                 <td>{{ p.categoria | title }}</td>
+                <td>
+                    <a href="{% url 'app_tienda:modificar_producto' p.id %}" class="btn btn-info btn-sm">Modificar</a>
+                    <a href="{% url 'app_tienda:eliminar_producto' p.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
             </tr>
             {% endfor %}
         

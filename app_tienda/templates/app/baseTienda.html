@@ -52,6 +52,12 @@
               <li><a href="{% url 'app_tienda:catalogoExoticos' %}">Catalogo Exoticos</a></li>
               <li><a href="{% url 'app_tienda:catalogoFarmacia' %}">Catalogo Farmacia</a></li>
             </ul>
+            <li>
+              <a href="{% url 'app_tienda:agregar_producto' %}">Agregar Producto</a>
+            </li>
+            <li>
+              <a href="{% url 'app_tienda:listar_productos' %}">Listado Productos</a>
+            </li>
           </li>
           {% if user.is_authenticated %}
 

@@ -1,0 +1,32 @@
+{% extends 'app/baseTienda.html' %}
+
+{% block contenido %}
+<br><br><br><br><br>
+
+
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Editar Producto</h2>
+                            <hr>
+                            <form action="" method="post" enctype="multipart/form-data">
+
+                                {% csrf_token %}
+                                {{ form }}
+
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-center">
+                                        <input type="reset" value="Cancelar" class="btn btn-secondary">
+                                        &nbsp;
+                                        <input type="submit" value="Editar" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                            {{mensaje}}
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+{% endblock %}
