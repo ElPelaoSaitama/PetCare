@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from .models import Agendamiento, Categoria , Veterinario, Peluquera
 
 User = get_user_model()
 
@@ -49,6 +50,26 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class AgendamientoForm(forms.ModelForm):
+    nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    apellido = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    rut = forms.CharField(max_length=11, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    correo = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    veterinario = forms.ModelChoiceField(queryset=Veterinario.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    peluquera = forms.ModelChoiceField(queryset=Peluquera.objects.filter(categoria_id=1), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    fecha = forms.DateTimeField(required=True, widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
+    mensaje = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}), required=True)
+
+    class Meta:
+        model = Agendamiento
+        fields = '__all__'
+        
+
+
+
 
 
 # Codigo antiguo para el fomulario de registro de usuario
