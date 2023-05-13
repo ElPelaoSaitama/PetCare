@@ -1,5 +1,29 @@
 {% extends 'app/baseTienda.html' %}
 
+{% block js %}
+
+    <script>
+        function eliminarProducto(id){
+            Swal.fire({
+              "title":"¿Estas Seguro?",
+              "text":"Esta accion no se puede deshacer",
+              "icon":"question",
+              "showCancelButton":true,
+              "cancelButtonText":"No, Cancelar",
+              "confirmButtonText":"Si, Eliminar",
+              "reverseButtons":true,
+              "confirmButtonColor":"#dc3545"
+            })
+            .then(function(result) {
+                if(result.isConfirmed) {
+                    window.location.href = "/petstore/eliminar-producto/"+id+"/"
+                }
+            })
+        }
+    </script>
+
+{% endblock %}
+
 {% block contenido %}
 {% load humanize %}
 <br><br><br><br><br>
@@ -16,7 +40,7 @@
         
             </tr>
         
-            {% for p in productos %}
+            {% for p in entity %}
         
             <tr>
                 <td>{{ p.nombre | title }}</td>
@@ -25,12 +49,13 @@
                 <td>{{ p.categoria | title }}</td>
                 <td>
                     <a href="{% url 'app_tienda:modificar_producto' p.id %}" class="btn btn-info btn-sm">Modificar</a>
-                    <a href="{% url 'app_tienda:eliminar_producto' p.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    &nbsp;
+                    <a href="#" onclick="eliminarProducto({{ p.id }})" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}
-        
         </table>
+        {% include 'app/paginator.html' %}
     </div>
 </div>
 

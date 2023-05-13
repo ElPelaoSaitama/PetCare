@@ -35,8 +35,59 @@
 
   </head>
 <body>
+
+      <!-- Header -->
+      <header id="header" class="fixed-top header-inner-pages ">
+        <div class="container d-flex align-items-center">
+    
+          <h1 class="logo me-auto"><a href="{% url 'app_clinica:home' %}">PetCare</a></h1>
+          <!-- Uncomment below if you prefer to use an image logo -->
+          <!-- <a href="index.html" class="logo me-auto"><img src="{% static 'app/img/LogoPetCare.png' %}" alt="" class="img-fluid"></a> -->
+    
+          <nav id="navbar" class="navbar">
+            <ul>
+              <li><a class="nav-link scrollto active" href="{% url 'app_clinica:home' %}">Inicio</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'app_clinica:home' %}#about">Acerca de</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'app_clinica:home' %}#services">Servicios</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'app_clinica:agendamiento' %}">Agendamiento</a></li>
+              <li><a class="nav-link scrollto" href="{% url 'app_clinica:home' %}#team">Equipo</a></li>
+              <li class="dropdown"><a href="{% url 'app_tienda:categorias' %}"><span>PetStore</span> <i class="bi bi-chevron-down"></i></a>
+                <ul>
+                  <li><a href="{% url 'app_tienda:catalogoPerros' %}">Catalogo Perros</a></li>
+                  <li><a href="{% url 'app_tienda:catalogoGatos' %}">Catalogo Gatos</a></li>
+                  <li><a href="{% url 'app_tienda:catalogoExoticos' %}">Catalogo Exoticos</a></li>
+                  <li><a href="{% url 'app_tienda:catalogoFarmacia' %}">Catalogo Farmacia</a></li>
+                </ul>
+              </li>
+  
+              {% if user.is_authenticated %}
+  
+              <li><a class="nav-link scrollto" href="{% url 'logout' %}">Cerrar sesión</a></li>
+              <li><a class="getstarted scrollto" href="#"></i>{{ user.first_name.title }}<i class="fa-solid fa-circle fa-beat fa-2xs" style="color: #1cce31;"></i></a></li>
+  
+              {% else %}
+  
+              <li><a class="getstarted scrollto" href="{% url 'app_clinica:login' %}">Login</a></li>
+  
+              {% endif %}
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+          </nav><!-- .navbar -->
+    
+        </div>
+      </header>
+      <!-- /Header -->
     <div id="contenido">
           <main id="main">
+
+            <section id="breadcrumbs" class="breadcrumbs">
+              <div class="container">
+                <ol>
+                  <li><a href="{% url 'app_clinica:home' %}">Inicio</a></li>
+                  <li>Agendamiento</li>
+                </ol>
+              </div>
+            </section>
             <!-- El contenido -->
             <section id="contact" class="contact">
               <div class="container" data-aos="fade-up">            

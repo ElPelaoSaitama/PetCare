@@ -52,12 +52,16 @@
               <li><a href="{% url 'app_tienda:catalogoExoticos' %}">Catalogo Exoticos</a></li>
               <li><a href="{% url 'app_tienda:catalogoFarmacia' %}">Catalogo Farmacia</a></li>
             </ul>
+            {% if perms.app_tienda.add_producto %}
             <li>
               <a href="{% url 'app_tienda:agregar_producto' %}">Agregar Producto</a>
             </li>
+            {% endif %}
+            {% if perms.app_tienda.view_producto %}
             <li>
               <a href="{% url 'app_tienda:listar_productos' %}">Listado Productos</a>
             </li>
+            {% endif %}
           </li>
           {% if user.is_authenticated %}
 
@@ -77,6 +81,8 @@
   <!-- End Header -->
 
   <main id="main">
+
+
     {% block contenido %}
 
     {% endblock %}
@@ -211,4 +217,24 @@
   
   <!-- Boostrap  -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-</html>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  {% if messages %}
+  {% for m in messages %}
+    <script>
+      Swal.fire({
+        "title": "Felictaciones",
+        "text": "{{m}}",
+        "icon": "success"
+      })
+    </script>
+  {% endfor %}
+  {% endif %}
+
+  {% block js %}
+
+  {% endblock %}
+
+
+  </html>

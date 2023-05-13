@@ -11,7 +11,7 @@ urlpatterns = [
     path('agregar-producto/', views.agregar_producto, name="agregar_producto" ),
     path('listar-producto/', views.listar_productos, name="listar_productos" ),
     path('modificar-producto/<id>/', views.modificar_producto, name="modificar_producto" ),
-    path('eliminar-prpducto/<id>', views.eliminar_producto, name="eliminar_producto"),
+    path('eliminar-producto/<id>/', views.eliminar_producto, name="eliminar_producto"),
     
 
 ]

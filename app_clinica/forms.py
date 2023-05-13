@@ -1,11 +1,16 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from .models import Agendamiento, Categoria , Veterinario, Peluquera
 
 User = get_user_model()
+
+class CustomLogin(AuthenticationForm):
+    username = forms.EmailField(required=True, label=("Correo"), widget=forms.TextInput(attrs={'placeholder': 'example@example.com','class': 'form-control '}))
+    password = forms.CharField(required=True, label=("Contraseña"), widget=forms.PasswordInput(attrs={'placeholder': '*****','class': 'form-control '}))
+
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
