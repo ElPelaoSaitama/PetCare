@@ -3,12 +3,24 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required , permission_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm
 from .models import Categoria, Veterinario
 # Create your views here.
 
 def home(request):
-    return render(request,'app/home.html')
+    data = {
+        'form': ContactoForm()
+    }
+
+    if request.method == 'POST':
+        formulario = ContactoForm(data=request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            data["mensaje"] = "Mensaje enviado"
+        else:
+            data["form"] = formulario
+
+    return render(request,'app/home.html',data)
 
 #@login_required
 def agendamiento(request):

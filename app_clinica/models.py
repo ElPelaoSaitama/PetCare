@@ -49,9 +49,17 @@ class Agendamiento(models.Model):
     rut = models.CharField(max_length=11)
     correo = models.EmailField()
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
-    veterinario = models.ForeignKey(Veterinario, on_delete=models.PROTECT)
-    peluquera = models.ForeignKey(Peluquera, on_delete=models.PROTECT, null=True)
     fecha = models.DateTimeField()
+    mensaje = models.TextField()
+
+    def __str__(self):
+        return self.nombre
+
+# Tabla Contacto
+class Contacto(models.Model):
+    nombre = models.CharField(max_length=50)
+    correo = models.EmailField(max_length=50)
+    asunto = models.CharField(max_length=50)
     mensaje = models.TextField()
 
     def __str__(self):

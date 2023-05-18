@@ -126,7 +126,6 @@
         </div>
 
         <div class="row">
-
           <div class="col-lg-5 d-flex align-items-stretch">
             <div class="info">
               <div class="address">
@@ -151,36 +150,30 @@
             </div>
 
           </div>
-
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-            <form method="post" role="form" class="php-email-form">
+            <form action="" method="post"  class="php-email-form">
+              {% csrf_token %}
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="name">Nombre</label>
-                  <input type="text" name="name" class="form-control" id="name" required>
+                  {{form.nombre}}
                 </div>
                 <div class="form-group col-md-6">
                   <label for="name">Correo Electronico</label>
-                  <input type="email" class="form-control" name="email" id="email" required>
+                  {{form.correo}}
                 </div>
               </div>
               <div class="form-group">
                 <label for="name">Asunto</label>
-                <input type="text" class="form-control" name="subject" id="subject" required>
+                {{form.asunto}}
               </div>
               <div class="form-group">
                 <label for="name">Mensaje</label>
-                <textarea class="form-control" name="message" rows="10" required></textarea>
-              </div>
-              <div class="my-3">
-                <div class="loading">Cargando</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Tú Cita a sido agendada. Gracias!</div>
+                {{form.mensaje}}
               </div>
               <div class="text-center"><button type="submit">Enviar</button></div>
             </form>
           </div>
-
         </div>
 
       </div>
