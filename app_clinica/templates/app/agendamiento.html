@@ -119,60 +119,10 @@
                          
                   <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
                     <form method="post" role="form" class="php-email-form">
+                      
                       {% csrf_token %} 
                       {{form}}
-                      <!-- <div class="row">
-                        <div class="form-group col-md-6">
-                          <label for="name">Nombre</label>
-                          <input type="text" name="nombre" class="form-control" id="nombre" required>
-                          <label for="name">Rut</label>
-                          <input type="text" name="rut" class="form-control" id="rut" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="name">Apellido</label>
-                          <input type="text" name="apellido" class="form-control" id="apellido" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="name">Correo Electronico</label>
-                          <input type="email" class="form-control" name="correo" id="correo" required>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-group">
-                          <label for="exampleFormControlSelect1">Tipo de Servicios</label>
-                          <select class="form-control" id="exampleFormControlSelect1">
-                            <option>Seleccione....</option>
-                            {% for c in categoria %}
-                            <option>{{ c.nombre | title }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-group">
-                          <label for="exampleFormControlSelect1">Veterinario</label>
-                          <select class="form-control" id="exampleFormControlSelect1">
-                            <option>Seleccione....</option>
-                            {% for v in veterinario %}
-                            <option>{{ v.nombre | title }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </div>
 
-                      <input type="datetime-local" id="fecha" name="fecha">
-
-
-                      <div class="form-group">
-                        <label for="name">Mensaje</label>
-                        <textarea class="form-control" name="mensaje" rows="10" required></textarea>
-                      </div>
-                      <div class="my-3">
-                        <div class="loading">Cargando</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Tú Cita a sido agendada. Gracias!</div>
-                      </div> -->
-                      <!-- <input type="submit" value="Guardar" class="btn btn-primary"> -->
                       <div class="text-center"><button type="submit">Agendar</button></div>
                     </form>
                     {{mensaje}}

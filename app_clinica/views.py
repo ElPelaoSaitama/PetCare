@@ -9,6 +9,7 @@ from .models import Categoria, Veterinario
 
 def home(request):
     return render(request,'app/home.html')
+
 #@login_required
 def agendamiento(request):
     categoria = Categoria.objects.all()
@@ -31,9 +32,6 @@ def agendamiento(request):
 
     return render(request, 'app/agendamiento.html', data)
 
-def login(request):
-    return render(request,'registration/login.html')
-
 def register(request):
     data = {
         'form': CustomUserCreationForm()
@@ -48,5 +46,3 @@ def register(request):
         data["form"] = formulario
 
     return render(request, 'registration/registro.html', data)
-
-    
