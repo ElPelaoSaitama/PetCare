@@ -71,10 +71,11 @@ class AgendamientoForm(forms.ModelForm):
         fields = '__all__'
 
 class ContactoForm(forms.ModelForm):
-    nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','id': 'nombre'}))
-    correo = forms.EmailField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','id': 'correo'}))
-    asunto = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','id': 'asunto'}))
-    mensaje = forms.CharField(required=True, widget=forms.Textarea(attrs={'class': 'form-control','id': 'mensaje'}))
+    nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'name': 'nombre'}))
+    correo = forms.EmailField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'correo', 'name': 'correo'}))
+    asunto = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'asunto', 'name': 'asunto'}))
+    mensaje = forms.CharField(required=True, widget=forms.Textarea(attrs={'class': 'form-control', 'id': 'mensaje', 'name': 'mensaje'}))
+
 
     class Meta:
         model = Contacto

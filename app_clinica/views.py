@@ -2,6 +2,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required , permission_required
 from django.contrib.auth import authenticate, login
+
+#importes para email
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.conf import settings
+
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm
 from .models import Categoria, Veterinario
@@ -58,3 +64,29 @@ def register(request):
         data["form"] = formulario
 
     return render(request, 'registration/registro.html', data)
+
+def contact(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']
+        correo = request.POST['correo']
+        asunto = request.POST['asunto']
+        mensaje = request.POST['mensaje']
+
+        template = render_to_string('app/email_template.html', {
+            'nombre' : nombre,
+            'correo' : correo,
+            'mensaje' : mensaje
+        })
+
+        email = EmailMessage(
+          asunto,
+          template,
+          settings.EMAIL_HOST_USER,
+          ['petcarevetter@gmail.com']
+        )
+
+        email.fail_silently = False
+        email.send()
+
+        messages.success(request,'Se ha enviado tu correo.')
+        return redirect("app_clinica:home")
