@@ -5,6 +5,7 @@ from .models import Producto
 from .forms import ProductoForm
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.contrib.auth.decorators import login_required , permission_required
 
 #Pagina de categorias de la tienda
 def categorias(request):
@@ -38,6 +39,7 @@ def catFarmacia(request):
     }
     return render(request, 'app/catFarmacia.html', data)
 
+@permission_required('app_tienda.add_producto')
 def agregar_producto(request):
 
     data = {
@@ -54,6 +56,7 @@ def agregar_producto(request):
 
     return render(request, 'app/producto/agregar.html', data)
 
+@permission_required('app_tienda.view_producto')
 def listar_productos(request):
     productos = Producto.objects.all()
     page = request.GET.get('page',1)
@@ -71,6 +74,7 @@ def listar_productos(request):
 
     return render(request, 'app/producto/listar.html', data)
 
+@permission_required('app_tienda.change_producto')
 def modificar_producto(request, id):
     producto = get_object_or_404(Producto, id=id)
     data = {
@@ -87,6 +91,7 @@ def modificar_producto(request, id):
 
     return render(request, 'app/producto/modificar.html', data)
 
+@permission_required('app_tienda.delete_producto')
 def eliminar_producto(request, id):
     producto = get_object_or_404(Producto, id=id)
     producto.delete()
