@@ -7,6 +7,7 @@ urlpatterns = [
     path('agendamiento/', views.agendamiento, name="agendamiento"),
     path('registro/', views.register, name="registro"),
     path('contact/', views.contact, name="contact"),
-    path('user/', views.user, name="user")
+    path('user/', views.user, name="user"),
+    path('peluqueras/', views.PeluquerasLista.as_view(), name="peluqueras-lista"), #Este se utilizo de ejemplo para listar el nombre de los peluqueros
 
 ]

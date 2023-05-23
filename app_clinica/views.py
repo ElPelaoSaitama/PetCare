@@ -10,7 +10,10 @@ from django.conf import settings
 
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm
-from .models import Categoria, Veterinario
+from .models import Categoria, Veterinario, Peluquera
+
+#Importes para js del perfil
+from django.views.generic import ListView
 # Create your views here.
 
 def home(request):
@@ -51,10 +54,6 @@ def agendamiento(request):
         data["form"] = formulario
 
     return render(request, 'app/agendamiento.html', data)
-
-
-
-
 
 def register(request):
     data = {
@@ -98,4 +97,17 @@ def contact(request):
         return redirect("app_clinica:home")
         
 def user(request):
-    return render(request,"app/user.html")       
+    return render(request,"app/user.html")   
+
+#Este se utilizo de ejemplo para listar el nombre de los peluqueros
+from django.views.generic import ListView
+from django.http import JsonResponse
+from .models import Peluquera
+
+class PeluquerasLista(ListView):
+    model = Peluquera
+
+    def get(self, request, *args, **kwargs):
+        peluqueras = self.get_queryset()
+        data = list(peluqueras.values())
+        return JsonResponse(data, safe=False)
