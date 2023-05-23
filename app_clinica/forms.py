@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto
+from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda
 
 User = get_user_model()
 
@@ -58,17 +58,59 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class AgendamientoForm(forms.ModelForm):
-    nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    apellido = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    rut = forms.CharField(max_length=11, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    correo = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    nombre = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
+    apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
+    rut = forms.CharField(max_length=12, required=True, widget=forms.TextInput(attrs={'class': 'form-control rut-input'}))
+    correo = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly','disabled': 'disabled'}))
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    fecha = forms.DateTimeField(required=True, widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
+    agenda = forms.ModelChoiceField(queryset=Agenda.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     mensaje = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}), required=True)
+    mascota = forms.ModelChoiceField(queryset=Mascota.objects.none(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+        if self.request:
+            user = self.request.user
+            self.fields['nombre'].widget.attrs['value'] = user.first_name
+            self.fields['nombre'].initial = user.first_name
+
+            self.fields['apellido'].widget.attrs['value'] = user.last_name
+            self.fields['apellido'].initial = user.last_name
+
+            self.fields['correo'].widget.attrs['value'] = user.email
+            self.fields['correo'].initial = user.email
+
+            self.fields['mascota'].queryset = Mascota.objects.filter(dueno__user=self.request.user)
+
+        self.fields['cliente'].widget = forms.HiddenInput()
+        self.fields['cliente'].required = False
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.request:
+            user = self.request.user
+            instance.cliente_id = user.id
+            instance.nombre = user.first_name
+            instance.apellido = user.last_name
+            instance.correo = user.email
+            instance.cliente = user
+        if commit:
+            instance.save()
+        return instance
 
     class Meta:
         model = Agendamiento
         fields = '__all__'
+
+
+
+
+
+
+
+
 
 class ContactoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'name': 'nombre'}))
@@ -80,8 +122,6 @@ class ContactoForm(forms.ModelForm):
     class Meta:
         model = Contacto
         fields = '__all__'
-
-
 
 
 # Codigo antiguo para el fomulario de registro de usuario

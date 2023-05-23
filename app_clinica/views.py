@@ -28,27 +28,33 @@ def home(request):
 
     return render(request,'app/home.html',data)
 
-#@login_required
+@login_required
 def agendamiento(request):
     categoria = Categoria.objects.all()
     veterinario = Veterinario.objects.all()
 
     data = {
-        'form': AgendamientoForm(),
         'categoria': categoria,
         'veterinario': veterinario
     }
 
     if request.method == 'POST':
-        formulario = AgendamientoForm(data=request.POST, files=request.FILES)
+        formulario = AgendamientoForm(request.POST, request.FILES, request=request)  # Pasa el argumento request al instanciar el formulario
         if formulario.is_valid():
             formulario.save()
-            data["mensaje"] = "Agendado"
+            messages.success(request,'Se ha agendado la hora.')
+            return redirect('app_clinica:agendamiento')  # Redirige a la misma página para generar un nuevo formulario vacío
         else:
             data["form"] = formulario
-            
+    else:
+        formulario = AgendamientoForm(request=request)  # Pasa el argumento request al instanciar el formulario
+        data["form"] = formulario
 
     return render(request, 'app/agendamiento.html', data)
+
+
+
+
 
 def register(request):
     data = {
