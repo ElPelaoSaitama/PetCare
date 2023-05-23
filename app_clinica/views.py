@@ -96,3 +96,6 @@ def contact(request):
 
         messages.success(request,'Se ha enviado tu correo.')
         return redirect("app_clinica:home")
+        
+def user(request):
+    return render(request,"app/user.html")       

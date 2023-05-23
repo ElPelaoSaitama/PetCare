@@ -1,0 +1,49 @@
+{% extends 'app/baseSubPage.html'%}
+{% load static %}
+
+{% block contenido %}
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+        <div class="container" data-aos="fade-up">
+        <br>
+        <br>
+          <div class="section-title">
+            <h2>¡Bienvenido!</h2>
+            <p>En nuestro sitio, puedes acceder al historial clínico de tu mascota y registrarla en nuestro sistema para un cuidado más efectivo y organizado. Mantén un control exhaustivo de su salud y programa citas veterinarias de manera conveniente. Ofrecemos una solución integral para el cuidado de tu mascota.</p>
+          </div>
+  
+          <div class="row">
+            <div class="col-lg-5 d-flex align-items-stretch">
+              <div class="info">
+                <div id="open-clinica" class="address" role="button">
+                  <i class="bi bi-bookmark-plus"></i>
+                  <h4>Historial Clinico</h4>
+                  <p>Padre Alonso de Ovalle 1586, Santiago, Región Metropolitana</p>
+                </div>
+  
+                <div class="email" role="button">
+                  <i class="bi bi-balloon-heart-fill"></i>
+                  <h4>Tús Mascotas</h4>
+                  <p>Clinica@petcare.cl</p>
+                </div>
+  
+                <div class="phone" role="button">
+                  <i class="bi bi-phone"></i>
+                  <h4>Telefono:</h4>
+                  <p>+569 84611224</p>
+                </div>
+                </div>
+            </div>
+            <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
+                <h1 id="content">que aparece?</h1>
+            </div>
+          </div>
+  
+        </div>
+      </section><!-- End Contact Section -->
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'app/js/global.js' %}"></script>
+{% endblock %}
