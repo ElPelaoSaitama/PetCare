@@ -16,36 +16,46 @@
             <div class="col-lg-5 d-flex align-items-stretch">
               <div class="info">
 
-                <div class="phone" role="button" id="open-perfil">
+                <div class="phone" >
+                 <a href="{% url 'app_clinica:editar_perfil' %}">
                   <i class="bi bi-phone"></i>
                   <h4>Tus datos</h4>
                   <p>Modifica tus datos</p>
+                </a>
                 </div>
 
                 <div class="address" role="button" id="open-historial">
+                  <a href="{% url 'app_clinica:historial_medico' %}">
                   <i class="bi bi-bookmark-plus"></i>
                   <h4>Historial Clinico</h4>
                   <p>Historial de tus mascotas</p>
+                  </a>
                 </div>
   
                 <div class="email" role="button" id="open-mascotas">
+                  <a href="{% url 'app_clinica:mascota_cliente' %}">
                   <i class="bi bi-balloon-heart-fill"></i>
                   <h4>Tús Mascotas</h4>
                   <p>Clinica@petcare.cl</p>
+                  </a>
                 </div>
   
               </div>
             </div>
-            
+
             <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
               <div class="info">
 
-                <p id="content">Ke wea</p>
-                
+                {% block dinamico %}
+
+                <h1>Bienvenido! {{ user.first_name }}</h1>
+
+                {% endblock %}
+
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
       </section><!-- End Contact Section -->
 

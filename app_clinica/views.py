@@ -111,3 +111,12 @@ class PeluquerasLista(ListView):
         peluqueras = self.get_queryset()
         data = list(peluqueras.values())
         return JsonResponse(data, safe=False)
+
+def editarPerfil(request):
+    return render(request, 'app/editar_perfil.html')
+
+def historialMedico(request):
+    return render(request, 'app/historial_clinico.html')
+
+def mascotaCliente(request):
+    return render(request, 'app/mascota_cliente.html')

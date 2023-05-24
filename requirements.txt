@@ -3,3 +3,4 @@ mysqlclient
 django-crispy-forms
 pillow
 django-admin-interface
+django-widget-tweaks

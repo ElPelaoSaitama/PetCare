@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_clinica.apps.AppClinicaConfig',
     'app_tienda.apps.AppTiendaConfig',
+    'widget_tweaks',
     'crispy_forms',
     'colorfield',
     'django.contrib.humanize',
