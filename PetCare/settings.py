@@ -25,11 +25,12 @@ SECRET_KEY = 'django-insecure-v*6#^f8v!!=6ppwov2!_19%lb2h++f-p#_*&v)@&x5l^5=x9-v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#ALLOWED_HOSTS = ['petcare.ddns.net']
 ALLOWED_HOSTS = []
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'app_clinica:user'
 LOGOUT_REDIRECT_URL = '/'
 
 
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'crispy_forms',
     'colorfield',
+    'localflavor',
     'django.contrib.humanize',
 ]
 
@@ -175,3 +177,8 @@ EMAIL_HOST_USER = 'petcarevetter@gmail.com'
 EMAIL_HOST_PASSWORD = 'tsbnnvdijldznurx'
 
 
+#if DEBUG:
+    # Configuración del servidor de desarrollo
+    # Cambiar el puerto a 80
+#    PORT = 80
+#    BIND = '0.0.0.0'

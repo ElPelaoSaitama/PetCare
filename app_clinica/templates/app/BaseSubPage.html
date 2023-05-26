@@ -5,7 +5,11 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>PetCare - Tienda</title>
+{% block titulo %}
+
+{% endblock titulo %}
+  
+  
   <meta content="" name="description">
   <meta content="" name="keywords">
   {% load static %}
@@ -28,7 +32,7 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
-  <link href="{% static 'app/css/styletienda.css' %}" rel="stylesheet">
+  <!-- <link href="{% static 'app/css/styletienda.css' %}" rel="stylesheet"> -->
 
 </head>
 
@@ -37,7 +41,7 @@
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top header-inner-pages">
     <div class="container d-flex align-items-center">
-      <h1 class="logo me-auto"><a href="{% url 'app_clinica:home' %}">PetStore</a></h1>
+      <h1 class="logo me-auto"><a href="{% url 'app_clinica:home' %}">PetCare</a></h1>
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto" href="{% url 'app_clinica:home' %}">Inicio</a></li>
@@ -55,7 +59,7 @@
           {% if user.is_authenticated %}
 
           <li><a class="nav-link scrollto" href="{% url 'logout' %}">Cerrar sesión</a></li>
-          <li><a class="getstarted scrollto" href="#"></i>{{ user.first_name.title }}<i class="fa-solid fa-circle fa-beat fa-2xs" style="color: #1cce31;"></i></a></li>
+          <li><a class="getstarted scrollto" href="{% url 'app_clinica:user' %}"></i>{{ user.first_name.title }}<i class="fa-solid fa-circle fa-beat fa-2xs" style="color: #1cce31;"></i></a></li>
 
           {% else %}
 
@@ -191,20 +195,20 @@
   <script src="{% static 'app/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
   <script src="{% static 'app/vendor/swiper/swiper-bundle.min.js' %}"></script>
   <script src="{% static 'app/vendor/waypoints/noframework.waypoints.js' %}"></script>
-  <script src="{% static 'app/vendor/php-email-form/validate.js' %}"></script>
 
   <!-- Template Main JS File -->
   <script src="{% static 'app/js/main.js' %}"></script>
-
-</body>
-      <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
-  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
   
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+        
   <!-- Boostrap  -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
 
   {% if messages %}
   {% for m in messages %}

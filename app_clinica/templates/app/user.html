@@ -39,7 +39,7 @@
                   <p>Clinica@petcare.cl</p>
                   </a>
                 </div>
-  
+                
               </div>
             </div>
 
@@ -48,7 +48,7 @@
 
                 {% block dinamico %}
 
-                <h1>Bienvenido! {{ user.first_name }}</h1>
+                <h1>Bienvenido! {{ user.first_name.title }} {{ user.last_name.title }}</h1>
 
                 {% endblock %}
 

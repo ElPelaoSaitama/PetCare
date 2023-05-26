@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+#Automatizar el Cliente recibiendo los datos del user
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 # test para agendamiento
 from datetime import date
 from django.conf import settings
@@ -33,6 +37,20 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+# Tabla de genero de veterinario / peluqueras / cliente
+class Genero(models.Model):
+    GENERO_CHOICES = (
+        ("1", "Femenino"),
+        ("2", "Masculino"),
+        ("3", "Prefiero no decirlo")
+    )
+    
+    genero = models.CharField(max_length=2, choices=GENERO_CHOICES)
+
+    def __str__(self):
+        return self.get_genero_display()
+
+
 # Tabla medico veterinario
 class Veterinario(models.Model):
     nombre = models.CharField(max_length=50)
@@ -64,10 +82,25 @@ class Contacto(models.Model):
 # Tabla para los clientes
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fecha_nac = models.DateField(auto_now=False, auto_now_add=False)
+    fecha_nac = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    genero = models.ForeignKey(Genero, on_delete=models.CASCADE, null=True)
+    cellNumber = models.IntegerField(null=True)
+    direccion = models.CharField(max_length=50, null=True)
+    rut = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return self.user.username
+
+#Funcion para asignar un nuevo Usuario a Cliente
+@receiver(post_save, sender=User)
+def create_cliente(sender, instance, created, **kwargs):
+    if created:
+        Cliente.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_cliente(sender, instance, **kwargs):
+    instance.cliente.save()
+
 
 # Tabla para las mascotas
 class Mascota(models.Model):
@@ -139,4 +172,4 @@ class Agendamiento(models.Model):
 
     def __str__(self):
         return self.nombre
-    
+

@@ -3,7 +3,9 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda
+from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda, Cliente, Genero
+from django.forms.widgets import DateInput
+from django.forms import DateInput
 
 User = get_user_model()
 
@@ -56,7 +58,6 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
-
 class AgendamientoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
     apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
@@ -104,35 +105,106 @@ class AgendamientoForm(forms.ModelForm):
         model = Agendamiento
         fields = '__all__'
 
-
-
-
-
-
-
-
-
 class ContactoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'name': 'nombre'}))
     correo = forms.EmailField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'correo', 'name': 'correo'}))
     asunto = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'asunto', 'name': 'asunto'}))
     mensaje = forms.CharField(required=True, widget=forms.Textarea(attrs={'class': 'form-control', 'id': 'mensaje', 'name': 'mensaje'}))
 
-
     class Meta:
         model = Contacto
         fields = '__all__'
 
 
-# Codigo antiguo para el fomulario de registro de usuario
+#Test para cambiar los datos en editar perfil
 
-"""class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(max_length=50, required=True, label="Correo", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(max_length=30, required=True, label="Nombre", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(max_length=30, required=True, label="Apellido", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password1 = forms.CharField(label="Contraseña", strip=False, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña', 'id': 'id_password1', 'autocomplete': 'off'}))
-    password2 = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmar contraseña', 'id': 'id_password2', 'autocomplete': 'off'}))
-    
+from django.core.exceptions import ValidationError
+from django import forms
+
+def format_rut(value):
+    # Formatear el RUT: separar con puntos y agregar el dígito verificador al final
+    value = value.upper().replace(".", "").replace("-", "")
+    rut = value[:-1]
+    dv = value[-1]
+    rut = ".".join([rut[-3:], rut[-6:-3], rut[:-6]])  # Formato XXX.XXX.XXX
+    rut = f"{rut}-{dv}"
+    return rut
+
+def validate_rut(value):
+    # Validar el RUT: implementa tu lógica de validación aquí
+    # Devuelve True si el RUT es válido, de lo contrario False
+    rut = value.upper().replace(".", "").replace("-", "")
+    rut = rut[:-1] + "-" + rut[-1]
+    rut_sin_dv, dv = rut.split("-")
+    rut_sin_dv = rut_sin_dv[::-1]
+    multiplicador = 2
+    suma = 0
+    for digito in rut_sin_dv:
+        suma += int(digito) * multiplicador
+        multiplicador += 1
+        if multiplicador == 8:
+            multiplicador = 2
+    resto = suma % 11
+    digito_verificador = str(11 - resto)
+    if digito_verificador == "10":
+        digito_verificador = "K"
+    if digito_verificador == "11":
+        digito_verificador = "0"
+    return digito_verificador == dv
+
+class ClienteForm(forms.ModelForm):
+    genero = forms.ModelChoiceField(queryset=Genero.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'id': 'genero'}))
+    cellNumber = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'id': 'cellNumber', 'placeholder': 'Número de nueve dígitos'}))
+    direccion = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'direccion'}))
+    rut = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'rut'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'required': True, 'readonly': True, 'style': 'background-color: lightgray;'}))
+    nombre = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'required': 'true'}))
+    apellido = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'last-name', 'required': 'true'}))
+    fecha_nac = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'birth-date', 'required': 'true'}))
+
     class Meta:
-        model = User
-        fields = ['email','first_name', 'last_name']"""
+        model = Cliente
+        fields = ['nombre', 'apellido', 'genero', 'cellNumber', 'direccion', 'rut', 'email', 'fecha_nac']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].initial = self.instance.user.first_name
+        self.fields['apellido'].initial = self.instance.user.last_name
+        self.fields['email'].initial = self.instance.user.email
+        self.fields['fecha_nac'].initial = self.instance.fecha_nac
+
+    def clean_cellNumber(self):
+        cellNumber = self.cleaned_data['cellNumber']
+        if len(str(cellNumber)) != 9:
+            raise forms.ValidationError('El número de celular debe tener 9 dígitos.')
+        return cellNumber
+
+    def clean_rut(self):
+        rut = self.cleaned_data['rut']
+        rut = rut.upper().replace(".", "").replace("-", "")
+        if not validate_rut(rut):
+            raise forms.ValidationError('El RUT ingresado no es válido.')
+        return format_rut(rut)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
