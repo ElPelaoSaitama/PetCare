@@ -61,7 +61,7 @@ class CustomUserCreationForm(UserCreationForm):
 class AgendamientoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
     apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
-    rut = forms.CharField(max_length=12, required=True, widget=forms.TextInput(attrs={'class': 'form-control rut-input'}))
+    rut = forms.CharField(max_length=12, required=True, widget=forms.TextInput(attrs={'class': 'form-control rut-input', 'disabled': 'disabled'}))
     correo = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly','disabled': 'disabled'}))
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     agenda = forms.ModelChoiceField(queryset=Agenda.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
@@ -85,8 +85,13 @@ class AgendamientoForm(forms.ModelForm):
 
             self.fields['mascota'].queryset = Mascota.objects.filter(dueno__user=self.request.user)
 
+            # Obtener el RUT del cliente y establecerlo como valor inicial del campo "rut"
+            cliente = Cliente.objects.get(user=self.request.user)
+            self.fields['rut'].initial = cliente.rut
+
         self.fields['cliente'].widget = forms.HiddenInput()
         self.fields['cliente'].required = False
+
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -121,42 +126,11 @@ class ContactoForm(forms.ModelForm):
 from django.core.exceptions import ValidationError
 from django import forms
 
-def format_rut(value):
-    # Formatear el RUT: separar con puntos y agregar el dígito verificador al final
-    value = value.upper().replace(".", "").replace("-", "")
-    rut = value[:-1]
-    dv = value[-1]
-    rut = ".".join([rut[-3:], rut[-6:-3], rut[:-6]])  # Formato XXX.XXX.XXX
-    rut = f"{rut}-{dv}"
-    return rut
-
-def validate_rut(value):
-    # Validar el RUT: implementa tu lógica de validación aquí
-    # Devuelve True si el RUT es válido, de lo contrario False
-    rut = value.upper().replace(".", "").replace("-", "")
-    rut = rut[:-1] + "-" + rut[-1]
-    rut_sin_dv, dv = rut.split("-")
-    rut_sin_dv = rut_sin_dv[::-1]
-    multiplicador = 2
-    suma = 0
-    for digito in rut_sin_dv:
-        suma += int(digito) * multiplicador
-        multiplicador += 1
-        if multiplicador == 8:
-            multiplicador = 2
-    resto = suma % 11
-    digito_verificador = str(11 - resto)
-    if digito_verificador == "10":
-        digito_verificador = "K"
-    if digito_verificador == "11":
-        digito_verificador = "0"
-    return digito_verificador == dv
-
 class ClienteForm(forms.ModelForm):
     genero = forms.ModelChoiceField(queryset=Genero.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'id': 'genero'}))
     cellNumber = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'id': 'cellNumber', 'placeholder': 'Número de nueve dígitos'}))
     direccion = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'direccion'}))
-    rut = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'rut'}))
+    rut = forms.CharField(max_length=12, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'rut'}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'required': True, 'readonly': True, 'style': 'background-color: lightgray;'}))
     nombre = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'required': 'true'}))
     apellido = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'last-name', 'required': 'true'}))
@@ -178,13 +152,6 @@ class ClienteForm(forms.ModelForm):
         if len(str(cellNumber)) != 9:
             raise forms.ValidationError('El número de celular debe tener 9 dígitos.')
         return cellNumber
-
-    def clean_rut(self):
-        rut = self.cleaned_data['rut']
-        rut = rut.upper().replace(".", "").replace("-", "")
-        if not validate_rut(rut):
-            raise forms.ValidationError('El RUT ingresado no es válido.')
-        return format_rut(rut)
 
 
 

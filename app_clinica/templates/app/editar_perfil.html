@@ -37,8 +37,9 @@
 
     <div class="form-group">
       <label for="rut">RUT</label>
-      {{ form.rut }}
+      {{ form.rut|add_class:"rut-input" }}
     </div>
+    
 
     <div class="form-group col-md-6">
       <label for="birth-date">Fecha Nacimiento</label>
@@ -71,15 +72,14 @@
   </div>
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <br><br><hr>
 <a href="{% url 'app_clinica:mascota_cliente' %}">
   <i class="fa-solid fa-user-pen"></i>
   <h4 >Cambia tu contraseña</h4>
   <p>Debes recordar tu contraseña actual</p>
 </a>
-
-
-
 
 {% endblock dinamico %}
     
