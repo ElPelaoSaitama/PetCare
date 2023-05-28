@@ -211,17 +211,18 @@
 </body>
 
 
-  {% if messages %}
-  {% for m in messages %}
+{% if messages %}
+  {% for message in messages %}
     <script>
       Swal.fire({
-        "title": "Felictaciones",
-        "text": "{{m}}",
-        "icon": "success"
+        "title": "{% if message.tags == 'error' %}Error{% else %}Felicitaciones{% endif %}",
+        "text": "{{ message }}",
+        "icon": "{% if message.tags == 'error' %}error{% else %}success{% endif %}"
       })
     </script>
   {% endfor %}
-  {% endif %}
+{% endif %}
+
 
   {% block js %}
 

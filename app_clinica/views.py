@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required , permission_required
 from django.contrib.auth import authenticate, login
+from django.forms import DateInput
+from django.contrib.auth import update_session_auth_hash
 
 #importes para email
 from django.core.mail import EmailMessage
@@ -9,7 +11,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm
 from .models import Categoria, Veterinario, Peluquera
 
 #Importes para js del perfil
@@ -100,23 +102,6 @@ def contact(request):
 def user(request):
     return render(request,"app/user.html")   
 
-#Este se utilizo de ejemplo para listar el nombre de los peluqueros
-from django.views.generic import ListView
-from django.http import JsonResponse
-from .models import Peluquera
-
-class PeluquerasLista(ListView):
-    model = Peluquera
-
-    def get(self, request, *args, **kwargs):
-        peluqueras = self.get_queryset()
-        data = list(peluqueras.values())
-        return JsonResponse(data, safe=False)
-
-"""@login_required
-def editarPerfil(request):
-    return render(request, 'app/editar_perfil.html')"""
-
 @login_required
 def historialMedico(request):
     return render(request, 'app/historial_clinico.html')
@@ -124,11 +109,6 @@ def historialMedico(request):
 @login_required
 def mascotaCliente(request):
     return render(request, 'app/mascota_cliente.html')
-
-
-#test para editar perfil
-
-from django.forms import DateInput
 
 @login_required
 def editarPerfil(request):
@@ -155,6 +135,24 @@ def editarPerfil(request):
 
     context = {'form': form}
     return render(request, 'app/editar_perfil.html', context)
+
+@login_required
+def editarPassword(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Actualizar la sesión del usuario para evitar cierre de sesión
+            messages.success(request, 'Tu contraseña ha sido cambiada correctamente.')
+            return redirect('app_clinica:user')
+        else:
+            messages.error(request, 'Hubo un error al cambiar la contraseña. Por favor, verifica los datos ingresados.')
+    else:
+        form = ChangePasswordForm(request.user)
+
+    context = {'form': form}
+    return render(request, 'app/change_password.html', context)
+
 
 
 
