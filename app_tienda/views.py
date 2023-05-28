@@ -97,3 +97,6 @@ def eliminar_producto(request, id):
     producto.delete()
     messages.success(request, "Eliminado Correctamente")
     return redirect(to="app_tienda:listar_productos")
+
+def tienda(request):
+    return render (request, 'app/producto/tienda.html')

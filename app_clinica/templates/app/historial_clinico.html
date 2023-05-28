@@ -3,6 +3,28 @@
 {% load widget_tweaks %}
 
 {% block dinamico %}
-    <h2>Este es tu historial mamaguevo</h2>
+    <h2>Historico de tus consultas</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Fecha de Agendamiento</th>
+                    <th scope="col">Historial</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Jueves 25-05-2023</td>
+                    <td>Historial_Consulta</td>
+                    <td><button class="btn"><i class="bi bi-pencil-square"></i></button></td>
+                    <td><button class="btn"><i class="bi bi-download"></i></button></td>
+                    <td><button class="btn"><i class="fa fa-trash"></i></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock dinamico %}
     
