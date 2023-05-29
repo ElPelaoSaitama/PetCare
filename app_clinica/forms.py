@@ -62,7 +62,7 @@ class CustomUserCreationForm(UserCreationForm):
 class AgendamientoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
     apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
-    rut = forms.CharField(max_length=12, required=True, widget=forms.TextInput(attrs={'class': 'form-control rut-input', 'disabled': 'disabled'}))
+    rut = forms.CharField(max_length=12, required=False, widget=forms.TextInput(attrs={'class': 'form-control rut-input', 'disabled': 'disabled'}))
     correo = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly','disabled': 'disabled'}))
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     agenda = forms.ModelChoiceField(queryset=Agenda.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
@@ -173,8 +173,6 @@ class MascotaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.fech_naci:
             self.initial['fech_naci'] = self.instance.fech_naci.strftime('%Y-%m-%d')
-
-
 
 class AgregarMascotaForm(forms.ModelForm):
     class Meta:
