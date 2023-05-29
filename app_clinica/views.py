@@ -7,7 +7,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm
-from .models import Categoria, Veterinario, Peluquera, Mascota
+from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente
 
 # importe para pdf
 from io import BytesIO
@@ -113,9 +113,34 @@ def contact(request):
 def user(request):
     return render(request,"app/user.html")   
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Cliente, Mascota, Agendamiento
+
 @login_required
 def historialMedico(request):
-    return render(request, 'app/historial_clinico.html')
+    cliente = request.user.cliente
+    mascotas = Mascota.objects.filter(dueno=cliente)
+    consultas = Agendamiento.objects.filter(mascota__in=mascotas)
+    
+    # Obtener las fechas de agendamiento usando una lista de comprensión
+    fechas_agendamiento = [consulta.agenda.dia for consulta in consultas]
+    
+    context = {
+        'consultas': consultas,
+        'fechas_agendamiento': zip(consultas, fechas_agendamiento)
+    }
+    return render(request, 'app/historial_clinico.html', context)
+
+
+
+
+
+
+
+
+
+
 
 @login_required
 def mascotaCliente(request):

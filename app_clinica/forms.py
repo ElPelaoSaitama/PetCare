@@ -17,7 +17,6 @@ class CustomLogin(AuthenticationForm):
     username = forms.EmailField(required=True, label=("Correo"), widget=forms.TextInput(attrs={'placeholder': 'example@example.com','class': 'form-control '}))
     password = forms.CharField(required=True, label=("Contraseña"), widget=forms.PasswordInput(attrs={'placeholder': '*****','class': 'form-control '}))
 
-
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
         label=_("Correo electrónico"),
