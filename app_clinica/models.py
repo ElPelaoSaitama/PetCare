@@ -120,6 +120,13 @@ class Mascota(models.Model):
     fech_naci = models.DateField(auto_now=False, auto_now_add=False)
     microchip = models.IntegerField()
 
+    def calcular_edad(self):
+        today = date.today()
+        age = today.year - self.fech_naci.year
+        if today.month < self.fech_naci.month or (today.month == self.fech_naci.month and today.day < self.fech_naci.day):
+            age -= 1
+        return age
+
     def __str__(self):
         return f'Nombre:  {self.nombre} - Dueño : {self.dueno.user.first_name.title()} {self.dueno.user.last_name.title()}'
 

@@ -3,9 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda, Cliente, Genero
+from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda, Cliente, Genero, Especie, Raza
 from django.forms.widgets import DateInput
 from django.forms import DateInput
+from django.contrib.auth.forms import PasswordChangeForm
 
 User = get_user_model()
 
@@ -120,12 +121,6 @@ class ContactoForm(forms.ModelForm):
         model = Contacto
         fields = '__all__'
 
-
-#Test para cambiar los datos en editar perfil
-
-from django.core.exceptions import ValidationError
-from django import forms
-
 class ClienteForm(forms.ModelForm):
     genero = forms.ModelChoiceField(queryset=Genero.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'id': 'genero'}))
     cellNumber = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'id': 'cellNumber', 'placeholder': 'Número de nueve dígitos'}))
@@ -153,14 +148,42 @@ class ClienteForm(forms.ModelForm):
             raise forms.ValidationError('El número de celular debe tener 9 dígitos.')
         return cellNumber
 
-from django.contrib.auth.forms import PasswordChangeForm
-
 class ChangePasswordForm(PasswordChangeForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(user, *args, **kwargs)
         self.fields['old_password'].widget.attrs['class'] = 'form-control'
         self.fields['new_password1'].widget.attrs['class'] = 'form-control'
         self.fields['new_password2'].widget.attrs['class'] = 'form-control'
+
+
+
+from django import forms
+
+class MascotaForm(forms.ModelForm):
+    fech_naci = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'birth-date', 'required': 'true'}))
+
+    class Meta:
+        model = Mascota
+        fields = ['nombre', 'especie', 'raza', 'sexo', 'fech_naci', 'microchip']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'required': 'true'}),
+            'especie': forms.Select(attrs={'class': 'form-control', 'id': 'especie', 'required': 'true'}),
+            'raza': forms.Select(attrs={'class': 'form-control', 'id': 'raza', 'required': 'true'}),
+            'sexo': forms.Select(attrs={'class': 'form-control', 'id': 'genero'}),
+            'microchip': forms.NumberInput(attrs={'class': 'form-control', 'id': 'microchip'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.fech_naci:
+            self.initial['fech_naci'] = self.instance.fech_naci.strftime('%Y-%m-%d')
+
+
+
+
+
+
+
 
 
 

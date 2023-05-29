@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required , permission_required
 from django.contrib.auth import authenticate, login
 from django.forms import DateInput
 from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import get_object_or_404
 
 #importes para email
 from django.core.mail import EmailMessage
@@ -11,8 +12,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm
-from .models import Categoria, Veterinario, Peluquera
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm
+from .models import Categoria, Veterinario, Peluquera, Mascota
 
 #Importes para js del perfil
 from django.views.generic import ListView
@@ -108,7 +109,39 @@ def historialMedico(request):
 
 @login_required
 def mascotaCliente(request):
-    return render(request, 'app/mascota_cliente.html')
+    cliente = request.user.cliente
+    mascotas = Mascota.objects.filter(dueno=cliente)
+    mascotas_con_edad = [(mascota, mascota.calcular_edad()) for mascota in mascotas]
+    context = {'mascotas': mascotas_con_edad}
+    return render(request, 'app/mascota_cliente.html', context)
+
+
+def editar_mascota(request, mascota_id):
+    # Obtén la mascota a partir de su ID
+    mascota = get_object_or_404(Mascota, id=mascota_id)
+
+    if request.method == 'POST':
+        form = MascotaForm(request.POST, instance=mascota)
+        if form.is_valid():
+            form.save()
+            # Redirige al usuario a la página de detalles de la mascota o a donde desees
+            return redirect('/tus-mascotas/', mascota_id=mascota.id)
+    else:
+        form = MascotaForm(instance=mascota)
+
+    # Establece el valor inicial del campo de fecha de nacimiento en el formulario
+    form.fields['fech_naci'].widget.attrs['value'] = mascota.fech_naci.strftime('%Y-%m-%d')
+
+    return render(request, 'app/mascota/editar_mascota.html', {'form': form})
+
+
+
+
+
+
+
+
+
 
 @login_required
 def editarPerfil(request):

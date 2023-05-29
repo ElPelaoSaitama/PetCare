@@ -11,6 +11,7 @@ urlpatterns = [
     path('editar-perfil/', views.editarPerfil, name='editar_perfil'),
     path('editar-password/', views.editarPassword, name="editar_password"),
     path('historial-medico/', views.historialMedico, name="historial_medico"),
-    path('tus-mascotas/', views.mascotaCliente, name="mascota_cliente")
+    path('tus-mascotas/', views.mascotaCliente, name="mascota_cliente"),
+    path('editar-mascota/<int:mascota_id>/', views.editar_mascota, name='editar_mascota'),
 
 ]

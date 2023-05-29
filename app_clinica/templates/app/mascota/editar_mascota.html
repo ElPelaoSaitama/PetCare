@@ -1,0 +1,54 @@
+{% extends 'app/user.html' %}
+
+{% load widget_tweaks %}
+
+{% block dinamico %}
+
+<form method="POST" class="php-email-form">
+    {% csrf_token %}
+  
+    <div class="row">
+      <h2>Edita los datos de tu mascota</h2>
+  
+      <div class="form-group col-md-6">
+        <label for="nombre">Nombre</label>
+        {{ form.nombre }}
+      </div>
+  
+      <div class="form-group col-md-6">
+        <label for="especie">Especie</label>
+        {{ form.especie }}
+      </div>
+  
+      <div class="form-group">
+        <label for="raza">Raza</label>
+        {{ form.raza }}
+      </div>
+  
+      <div class="form-group col-md-6">
+        <label for="genero">Género</label>
+        {{ form.sexo }}
+      </div>
+  
+      <div class="form-group col-md-6">
+        <label for="fecha_nac">Fecha de Nacimiento</label>
+        {{ form.fech_naci }}
+      </div>
+  
+      <div class="form-group">
+        <label for="microchip">Microchip</label>
+        {{ form.microchip }}
+      </div>
+  
+      <div class="text-center">
+        <button type="submit">Guardar</button>
+      </div>
+    </div>
+  </form>
+  
+
+  
+  
+
+{% endblock dinamico %}
+    
