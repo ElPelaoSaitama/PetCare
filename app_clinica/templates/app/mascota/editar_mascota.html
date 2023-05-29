@@ -20,7 +20,9 @@
     {% csrf_token %}
   
     <div class="row">
+      <div class="text-center">
       <h2>Edita los datos de tu mascota</h2>
+      </div>
   
       <div class="form-group col-md-6">
         <label for="nombre">Nombre</label>
@@ -54,6 +56,12 @@
   
       <div class="text-center">
         <button type="submit">Guardar</button>
+      </div>
+
+      <div class="text-center" style="color: #999; font-style: italic; margin-top: 10px;">
+        Si necesitas eliminar una mascota de tu registro, contáctate con la veterinaria.
+      </div>
+  
       </div>
     </div>
   </form>
