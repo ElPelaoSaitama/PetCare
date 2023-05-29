@@ -155,10 +155,6 @@ class ChangePasswordForm(PasswordChangeForm):
         self.fields['new_password1'].widget.attrs['class'] = 'form-control'
         self.fields['new_password2'].widget.attrs['class'] = 'form-control'
 
-
-
-from django import forms
-
 class MascotaForm(forms.ModelForm):
     fech_naci = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'birth-date', 'required': 'true'}))
 
@@ -177,6 +173,23 @@ class MascotaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.fech_naci:
             self.initial['fech_naci'] = self.instance.fech_naci.strftime('%Y-%m-%d')
+
+
+
+class AgregarMascotaForm(forms.ModelForm):
+    class Meta:
+        model = Mascota
+        fields = ['nombre', 'especie', 'raza', 'sexo', 'fech_naci', 'microchip']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'required': 'true', 'placeholder': 'Nombre de su mascota'}),
+            'especie': forms.Select(attrs={'class': 'form-control', 'id': 'especie', 'required': 'true'}),
+            'raza': forms.Select(attrs={'class': 'form-control', 'id': 'raza', 'required': 'true'}),
+            'sexo': forms.Select(attrs={'class': 'form-control', 'id': 'genero'}),
+            'microchip': forms.NumberInput(attrs={'class': 'form-control', 'id': 'microchip', 'placeholder': 'Si no tiene chip, déjelo en cero'}),
+            'fech_naci': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'fecha_nac', 'required': 'true'})
+        }
+
+
 
 
 

@@ -13,5 +13,6 @@ urlpatterns = [
     path('historial-medico/', views.historialMedico, name="historial_medico"),
     path('tus-mascotas/', views.mascotaCliente, name="mascota_cliente"),
     path('editar-mascota/<int:mascota_id>/', views.editar_mascota, name='editar_mascota'),
+    path('nueva-mascota/',views.agregarMascota, name="agregar_mascota"),
 
 ]

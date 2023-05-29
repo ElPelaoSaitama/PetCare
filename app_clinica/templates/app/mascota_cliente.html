@@ -2,6 +2,10 @@
 
 {% load widget_tweaks %}
 
+{% block titulo %}
+<title>PetCare - Tus Mascotas</title>
+{% endblock titulo %}
+
 {% block dinamico %}
 
 <div class="text-center">
@@ -21,7 +25,7 @@
   <tbody>
     {% for mascota in mascotas %}
       <tr>
-        <td>{{ mascota.nombre }}</td>
+        <td>{{ mascota.nombre.title }}</td>
         <td>{{ mascota.especie }}</td>
         <td>{{ mascota.fech_naci }}</td>
         <td>{{ mascota.get_sexo_display }}</td>
@@ -35,7 +39,7 @@
 </table>
 
 <div class="text-center">
-  <a href="#" class="btn btn-primary">Agregar Mascota</a>
+  <a href="{% url 'app_clinica:agregar_mascota' %}" class="btn btn-primary">Agregar Mascota</a>
 </div>
 
 
