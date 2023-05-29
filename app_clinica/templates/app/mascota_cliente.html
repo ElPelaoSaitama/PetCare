@@ -30,7 +30,7 @@
         <td>{{ mascota.fech_naci }}</td>
         <td>{{ mascota.get_sexo_display }}</td>
         <td>
-          <a href="#"><i class="far fa-file-pdf"></i></a>
+          <a href="{% url 'app_clinica:generar_pdf' mascota.id %}"><i class="far fa-file-pdf"></i></a>
           <a href="{% url 'app_clinica:editar_mascota' mascota.id %}"><i class="far fa-edit"></i></a>
         </td>
       </tr>
@@ -41,12 +41,6 @@
 <div class="text-center">
   <a href="{% url 'app_clinica:agregar_mascota' %}" class="btn btn-primary">Agregar Mascota</a>
 </div>
-
-
-
-
-
-
 
 {% endblock dinamico %}
     

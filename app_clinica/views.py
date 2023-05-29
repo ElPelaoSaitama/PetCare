@@ -5,18 +5,28 @@ from django.contrib.auth import authenticate, login
 from django.forms import DateInput
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm
+from .models import Categoria, Veterinario, Peluquera, Mascota
+
+# importe para pdf
+from io import BytesIO
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 #importes para email
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
 
-from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm
-from .models import Categoria, Veterinario, Peluquera, Mascota
-
 #Importes para js del perfil
 from django.views.generic import ListView
+
 # Create your views here.
 
 def home(request):
@@ -133,7 +143,62 @@ def editar_mascota(request, mascota_id):
 
     return render(request, 'app/mascota/editar_mascota.html', {'form': form})
 
+@login_required
+def generar_pdf(request, mascota_id):
+    # Obtén la mascota a partir de su ID
+    mascota = get_object_or_404(Mascota, id=mascota_id)
 
+    # Crea un objeto BytesIO para almacenar el PDF generado
+    buffer = BytesIO()
+
+    # Establece el tamaño de página y márgenes
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=inch/2, leftMargin=inch/2, topMargin=inch/2, bottomMargin=inch/2)
+
+    # Lista para almacenar los elementos del PDF
+    elements = []
+
+    # Estilos para el título y el contenido
+    styles = getSampleStyleSheet()
+    estilo_titulo = styles['Title']
+    estilo_contenido = styles['BodyText']
+
+    # Agrega el título al PDF
+    titulo = f'Ficha de mascota - {mascota.nombre.capitalize()}'
+    elements.append(Paragraph(titulo, estilo_titulo))
+    elements.append(Spacer(1, 0.5*inch))
+
+    # Agrega la imagen al PDF
+    ruta_imagen = 'app_clinica/static/app/img/LogoPetCare.png'  # Ruta de la imagen
+    imagen = Image(ruta_imagen, width=2*inch, height=2*inch)
+    elements.append(imagen)
+    elements.append(Spacer(1, 0.5*inch))
+
+    # Agrega los campos de la mascota al PDF
+    dueno_nombre = f'Dueño: {mascota.dueno.user.first_name.capitalize()} {mascota.dueno.user.last_name.capitalize()}'
+    especie = f'Especie: {mascota.especie}'
+    raza = f'Raza: {mascota.raza}'
+    sexo = f'Sexo: {mascota.get_sexo_display()}'
+    fecha_nacimiento = f'Fecha de Nacimiento: {mascota.fech_naci}'
+    microchip = f'Microchip: {mascota.microchip}'
+
+    elements.append(Paragraph(dueno_nombre, estilo_contenido))
+    elements.append(Paragraph(especie, estilo_contenido))
+    elements.append(Paragraph(raza, estilo_contenido))
+    elements.append(Paragraph(sexo, estilo_contenido))
+    elements.append(Paragraph(fecha_nacimiento, estilo_contenido))
+    elements.append(Paragraph(microchip, estilo_contenido))
+
+    # Agrega espacio adicional
+    elements.append(Spacer(1, 0.5*inch))
+
+    # Genera el PDF
+    doc.build(elements)
+
+    # Vuelve al inicio del objeto BytesIO
+    buffer.seek(0)
+
+    # Crea una respuesta de archivo para descargar el PDF
+    return FileResponse(buffer, as_attachment=True, filename=f'Ficha-{mascota.nombre.capitalize()}.pdf')
 
 @login_required
 def agregarMascota(request):
@@ -152,15 +217,6 @@ def agregarMascota(request):
     
     context = {'form': form}
     return render(request, 'app/mascota/agregar_mascota.html', context)
-
-
-
-
-
-
-
-
-
 
 @login_required
 def editarPerfil(request):
