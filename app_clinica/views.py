@@ -111,11 +111,10 @@ def historialMedico(request):
 def mascotaCliente(request):
     cliente = request.user.cliente
     mascotas = Mascota.objects.filter(dueno=cliente)
-    mascotas_con_edad = [(mascota, mascota.calcular_edad()) for mascota in mascotas]
-    context = {'mascotas': mascotas_con_edad}
+    context = {'mascotas': mascotas}
     return render(request, 'app/mascota_cliente.html', context)
 
-
+@login_required
 def editar_mascota(request, mascota_id):
     # Obtén la mascota a partir de su ID
     mascota = get_object_or_404(Mascota, id=mascota_id)
