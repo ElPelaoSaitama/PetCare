@@ -7,6 +7,9 @@ from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, 
 from django.forms.widgets import DateInput
 from django.forms import DateInput
 from django.contrib.auth.forms import PasswordChangeForm
+from datetime import date
+from django.db.models import Q
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -65,7 +68,7 @@ class AgendamientoForm(forms.ModelForm):
     rut = forms.CharField(max_length=12, required=False, widget=forms.TextInput(attrs={'class': 'form-control rut-input', 'disabled': 'disabled'}))
     correo = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly','disabled': 'disabled'}))
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    agenda = forms.ModelChoiceField(queryset=Agenda.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    agenda = forms.ModelChoiceField(queryset=Agenda.objects.none(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     mensaje = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}), required=True)
     mascota = forms.ModelChoiceField(queryset=Mascota.objects.none(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
 
@@ -86,13 +89,19 @@ class AgendamientoForm(forms.ModelForm):
 
             self.fields['mascota'].queryset = Mascota.objects.filter(dueno__user=self.request.user)
 
+            fecha_actual = timezone.now().date()
+            agendas_disponibles = Agenda.objects.filter(
+                Q(dia__gte=fecha_actual) &
+                Q(agendamiento__isnull=True)
+            )
+            self.fields['agenda'].queryset = agendas_disponibles
+
             # Obtener el RUT del cliente y establecerlo como valor inicial del campo "rut"
             cliente = Cliente.objects.get(user=self.request.user)
             self.fields['rut'].initial = cliente.rut
 
         self.fields['cliente'].widget = forms.HiddenInput()
         self.fields['cliente'].required = False
-
 
     def save(self, commit=True):
         instance = super().save(commit=False)
