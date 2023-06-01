@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+{% block titulo %}
+<title>PetCare - Acceso colaborador</title>
+{% endblock titulo %}
+  
+  
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  {% load static %}
+
+  <!-- Favicons -->
+  <link href="{% static 'app/img/pata.png' %}" rel="icon">
+  <link href="{% static 'app/img/pata.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'app/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
+
+  <!-- <link href="{% static 'app/css/styletienda.css' %}" rel="stylesheet"> -->
+
+</head>
+
+<body>
+
+
+  <main id="main">
+
+
+    {% block contenido %}
+
+    <style>
+        .card-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 91.59vh; /* Ajusta la altura según tus necesidades */
+        }
+    
+        .card {
+            max-width: 400px; /* Ajusta el ancho máximo según tus necesidades */
+            margin: 0 auto; /* Centra el card horizontalmente */
+        }
+    
+        .card-body {
+            margin-bottom: 20px; /* Ajusta el valor del margen según tus necesidades */
+        }
+    
+        .btn-primary {
+            margin-top: 10px; /* Ajusta el valor del margen según tus necesidades */
+        }
+    </style>
+    
+    <div class="card-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{% url 'app_clinica:colaborador_login' %}" class="php-email-form">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <h2>Acceso colaborador</h2>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="nombre">Nombre de usuario</label>
+                        <input type="text" name="username" class="form-control" placeholder="" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="contraseña">Contraseña</label>
+                        <input type="password" name="password" class="form-control" placeholder="" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+
+    {% endblock %}
+
+
+  </main>
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+
+
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        &copy; Copyright <strong><span>PetStore</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
+        Designed by <a href="https://bootstrapmade.com/">Duoc UC</a>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  {% block preloader %}
+
+
+  {% endblock %}
+
+  <!-- Vendor JS Files --> 
+  <script src="{% static 'app/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'app/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'app/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'app/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'app/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'app/vendor/waypoints/noframework.waypoints.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'app/js/main.js' %}"></script>
+  
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+        
+  <!-- Boostrap  -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+  </html>

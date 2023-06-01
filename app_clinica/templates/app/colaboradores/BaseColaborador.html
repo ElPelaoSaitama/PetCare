@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+{% block titulo %}
+
+{% endblock titulo %}
+  
+  
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  {% load static %}
+
+  <!-- Favicons -->
+  <link href="{% static 'app/img/pata.png' %}" rel="icon">
+  <link href="{% static 'app/img/pata.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'app/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'app/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
+
+  <!-- <link href="{% static 'app/css/styletienda.css' %}" rel="stylesheet"> -->
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-inner-pages">
+    <div class="container d-flex align-items-center">
+      <h1 class="logo me-auto"><a href="{% url 'app_clinica:colaborador' %}">PetCare</a></h1>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto" href="{% url 'app_clinica:home' %}#team">Equipo</a></li>
+
+          {% if user.is_authenticated %}
+
+          <li><a class="nav-link scrollto" href="{% url 'logout' %}">Cerrar sesión</a></li>
+          <li><a class="getstarted scrollto" href="{% url 'app_clinica:colaborador' %}"></i>{{ user.first_name.title }}<i class="fa-solid fa-circle fa-beat fa-2xs" style="color: #1cce31;"></i></a></li>
+
+          {% else %}
+
+          <li><a class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
+
+          {% endif %}
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header>
+  <!-- End Header -->
+
+  <main id="main">
+
+
+    {% block contenido %}
+
+    {% endblock %}
+
+
+  </main>
+  <section id="clients" class="clients section-bg">
+    <div class="container">
+  
+        <div class="row" data-aos="zoom-in">
+  
+        <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="{% static 'app/img/clients/client-1.png' %}" class="img-fluid" alt="">
+        </div>
+  
+            <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+              <img src="{% static 'app/img/clients/client-2.png' %}" class="img-fluid" alt="">
+            </div>
+  
+            <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+              <img src="{% static 'app/img/clients/client-3.png' %}" class="img-fluid" alt="">
+            </div>
+  
+            <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+              <img src="{% static 'app/img/clients/client-4.png' %}" class="img-fluid" alt="">
+            </div>
+  
+            <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+              <img src="{% static 'app/img/clients/client-5.png' %}" class="img-fluid" alt="">
+            </div>
+  
+            <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+              <img src="{% static 'app/img/clients/client-6.png' %}" class="img-fluid" alt="">
+            </div>
+          </div>
+        </div>
+</section>
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>Pet Care</h3>
+            <p>
+              Padre Alonso de Ovalle 1586 <br>
+              Santiago, Región Metropolitana<br>
+              Chile <br><br>
+              <strong>Telefono:</strong> +569 84611224<br>
+              <strong>Email:</strong> clinica@petcare.cl<br>
+            </p>
+          </div>
+
+            <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Accesos</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Inicio</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Acerca de</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Equipo</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Agendamiento</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Servicios</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Peluqueria</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Consulta Médica</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Procedimientos</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">PetStore</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Redes Sociales</h4>
+            <p>Encuentranos en nuestras Redes Sociales!</p>
+            <div class="social-links mt-3">
+              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+              <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+              <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        &copy; Copyright <strong><span>PetStore</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
+        Designed by <a href="https://bootstrapmade.com/">Duoc UC</a>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  {% block preloader %}
+
+
+  {% endblock %}
+
+  <!-- Vendor JS Files --> 
+  <script src="{% static 'app/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'app/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'app/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'app/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'app/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'app/vendor/waypoints/noframework.waypoints.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'app/js/main.js' %}"></script>
+  
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/a60d48617b.js" crossorigin="anonymous"></script>
+        
+  <!-- Boostrap  -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      Swal.fire({
+        "title": "{% if message.tags == 'error' %}Error{% else %}Felicitaciones{% endif %}",
+        "text": "{{ message }}",
+        "icon": "{% if message.tags == 'error' %}error{% else %}success{% endif %}"
+      })
+    </script>
+  {% endfor %}
+{% endif %}
+
+
+  {% block js %}
+
+  {% endblock %}
+
+
+  </html>

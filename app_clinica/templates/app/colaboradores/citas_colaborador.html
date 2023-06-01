@@ -1,0 +1,86 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Tus citas</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+<style>
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .table th {
+        background-color: #f2f2f2;
+    }
+
+    .table td.actions {
+        width: 150px;
+    }
+
+    .table td.actions button {
+        padding: 5px;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    .table td.actions button:hover {
+        color: blue;
+    }
+</style>
+
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Fecha Agendamiento</th>
+                <th>Hora</th>
+                <th>Categoría</th>
+                <th>Nombre Mascota</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agendamiento in agendamientos %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ agendamiento.agenda.dia }}</td>
+                    <td>{{ agendamiento.agenda.get_horario_display }}</td>
+                    <td>{{ agendamiento.categoria.nombre }}</td>
+                    <td>{{ agendamiento.mascota.nombre.title }}</td>
+                    <td class="actions">
+                        <a href="{% url 'app_clinica:diagnostico' consulta_id=agendamiento.id %}"><button><i class="fas fa-edit"></i></button></a>
+                        <button class="diagnostico-button" data-agendamiento-id="{{ agendamiento.id }}"><i class="fas fa-info-circle"></i></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock dinamico %}
+
+{% block js %}
+    <script src="{% static 'app/js/diagnostico.js' %}"></script>
+{% endblock %}
+    

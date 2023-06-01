@@ -1,0 +1,55 @@
+{% extends 'app/colaboradores/BaseColaborador.html'%}
+{% load static %}
+
+{% block titulo %}
+<title>PetCare - Colaborador</title>
+{% endblock titulo %}
+
+{% block contenido %}
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+        <div class="container" data-aos="fade-up">
+        <br>
+        <br>
+          <div class="section-title">
+            <h2>¡Bienvenido!</h2>
+            <p><strong>{{ user.first_name.title }}</strong>! 
+                Nos alegra tenerte de vuelta en la página de PetCare. Gracias por iniciar sesión. Estamos listos para trabajar juntos y cuidar de nuestras adorables mascotas. ¡Que tengas un excelente día!</p>
+          </div>
+  
+          <div class="row">
+            <div class="col-lg-5 d-flex align-items-stretch">
+              <div class="info">
+
+                <div class="phone" >
+                 <a href="{% url 'app_clinica:citas_colaborador' %}">
+                    <i class="fa-solid fa-calendar-days"></i>
+                  <h4>Tus citas</h4>
+                  <p>Citas agendadas contigo</p>
+                </a>
+                </div>
+                
+              </div>
+            </div>
+
+            <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
+              <div class="info">
+
+                {% block dinamico %}
+
+                <h1>Bienvenido! {{ user.first_name.title }} {{ user.last_name.title }}</h1>
+
+                {% endblock %}
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section><!-- End Contact Section -->
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'app/js/global.js' %}"></script>
+{% endblock %}

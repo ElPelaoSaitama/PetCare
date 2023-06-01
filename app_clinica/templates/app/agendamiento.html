@@ -119,24 +119,43 @@
                          
                   <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
                     <form method="post" role="form" class="php-email-form">
-                      {% csrf_token %} 
-                      {{ form }}
-                    
-                      <div class="text-center"><button type="submit">Agendar</button></div>
+                      {% csrf_token %}
+                      {{ form.as_p }}  <!-- Utiliza el método "as_p" para renderizar los campos como párrafos -->
+                  
+                      <div class="text-center">
+                        <button type="submit">Agendar</button>
+                      </div>
                     </form>
+                  </div>
+                  
                     
-                    <!-- Agrega el código JavaScript después del formulario -->
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                    $(document).ready(function() {
-                      $('.rut-input').on('input', function() {
-                        let rutValue = $(this).val();
-                        rutValue = rutValue.replace(/[^\dkK]+/g, ''); // Eliminar caracteres no numéricos ni "k" (u "K")
-                        rutValue = rutValue.replace(/^(\d{2})(\d{3})(\d{3})([\dkK]{1})$/, '$1.$2.$3-$4'); // Formato XX.XXX.XXX-X o XX.XXX.XXX-K
-                        $(this).val(rutValue);
+                  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                  <script>
+                  $(document).ready(function() {
+                    $('#id_categoria').change(function() {
+                      var categoriaId = $(this).val();
+                      $.ajax({
+                        url: "{% url 'app_clinica:get_agendas' %}",
+                        data: {
+                          'categoria_id': categoriaId
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                          var agendaSelect = $('#id_agenda');
+                          agendaSelect.empty();
+                          $.each(data, function(index, agenda) {
+                            agendaSelect.append($('<option>', {
+                              value: agenda.id,
+                              text: agenda.nombre
+                            }));
+                          });
+                        }
                       });
                     });
-                    </script>
+                  });
+                  </script>
+                  
+                  
                     
                     {{mensaje}}
                   </div>           

@@ -1,0 +1,80 @@
+{% extends 'app/user.html' %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Editar Agendamiento</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+<form method="POST" class="php-email-form">
+    {% csrf_token %}
+  
+    <div class="row">
+      <div class="text-center">
+      <h2>Editar Agendamiento</h2>
+      </div>
+  
+      <div class="form-group">
+        <label for="nombre">Mascota</label>
+        {{ form.mascota }}
+      </div>
+  
+      <div class="form-group col-md-6">
+        <label for="especie">Categoria</label>
+        {{ form.categoria }}
+      </div>
+  
+      <div class="form-group col-md-6">
+        <label for="raza">Agenda</label>
+        {{ form.agenda }}
+      </div>
+  
+      <div class="form-group">
+        <label for="genero">Mensaje</label>
+        {{ form.mensaje }}
+      </div>
+  
+      <div class="text-center">
+        <button type="submit">Guardar</button>
+      </div>
+  
+      </div>
+    </div>
+  </form>
+
+  <script>
+    // Obtener la referencia a los campos de categoría y agenda
+    const categoriaField = document.querySelector("#id_categoria");
+    const agendaField = document.querySelector("#id_agenda");
+  
+    // Capturar el evento de cambio en el campo de categoría
+    categoriaField.addEventListener("change", () => {
+      const categoriaId = categoriaField.value; // Obtener el ID de la categoría seleccionada
+  
+      // Realizar la llamada AJAX para obtener las agendas filtradas
+      fetch(`/obtener-agendas/?categoria_id=${categoriaId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          // Limpiar las opciones existentes en el campo de agenda
+          agendaField.innerHTML = "";
+  
+          // Agregar las opciones filtradas al campo de agenda
+          data.forEach((agenda) => {
+            const option = document.createElement("option");
+            option.value = agenda.id;
+            option.textContent = agenda.nombre;
+            agendaField.appendChild(option);
+          });
+        })
+        .catch((error) => {
+          console.error("Error al obtener las agendas filtradas:", error);
+        });
+    });
+  </script>
+  
+
+
+{% endblock dinamico %}
+    

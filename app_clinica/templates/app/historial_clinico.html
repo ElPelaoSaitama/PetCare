@@ -2,35 +2,153 @@
 
 {% load widget_tweaks %}
 
+{% load static %}
+
+{% block titulo %}
+<title>PetCare - Historial clinico</title>
+{% endblock titulo %}
+
 {% block dinamico %}
 
-<h2>Historico de tus consultas</h2>
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      {% if message.tags == 'info' %}
+        Swal.fire({
+          "title": "Confirmación",
+          "text": "{{ message }}",
+          "icon": "question",
+          "showCancelButton": true,
+          "confirmButtonColor": "#dc3545",
+          "confirmButtonText": "Confirmar",
+          "cancelButtonText": "Cancelar"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById("eliminar-form-{{ consulta.id }}").submit();
+          }
+        });
+      {% elif message.tags == 'success' %}
+        Swal.fire({
+          "title": "Felicitaciones",
+          "text": "{{ message }}",
+          "icon": "success"
+        });
+      {% elif message.tags == 'error' %}
+        Swal.fire({
+          "title": "Error",
+          "text": "{{ message }}",
+          "icon": "error"
+        });
+      {% endif %}
+    </script>
+  {% endfor %}
+{% endif %}
+
+{% load humanize %}
+
+<div class="text-center"><h2>Historico de tus consultas</h2></div>
+<div class="text-center" style="color: #999; font-style: italic; margin-top: 10px;">
+  Las consultas ya finalizadas no se pueden editar ni eliminar.
+</div>
 <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
                 <th scope="col">N°</th>
                 <th scope="col">Fecha de Agendamiento</th>
+                <th scope="col">Hora</th>
                 <th scope="col">Categoria</th>
+                <th scope="col">Nombre</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for consulta, fecha_agendamiento in fechas_agendamiento %}
+            {% for consulta, mascota_nombre, horario, consulta_pasada in detalles_consulta %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ fecha_agendamiento }}</td>
-                <td>{{ consulta.categoria }}</td>
                 <td>
-                    <button class="btn"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn"><i class="bi bi-download"></i></button>
-                    <button class="btn"><i class="fa fa-trash"></i></button>
+                    {% if horario %}
+                        {{ consulta.agenda.dia }}
+                    {% else %}
+                        {{ consulta.agenda.dia }} 
+                    {% endif %}
+                </td>
+                <td>{{ horario }}</td>
+                <td>{{ consulta.categoria }}</td>
+                <td>{{ mascota_nombre.title }}</td>
+                <td>
+                    {% if consulta_pasada %}
+                        <a href="#" class="disabled">
+                            <i class="fa fa-lock"></i>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'app_clinica:editar_agendamiento' consulta.id %}" class="btn">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form id="eliminar-form-{{ consulta.id }}" action="{% url 'app_clinica:eliminar_agendamiento' consulta.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-delete" onclick="confirmarEliminacion('{{ consulta.id }}')" title="Eliminar">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  document.getElementById('filtro-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      var categoriaId = document.getElementById('categoria').value;
+      var table = document.querySelector('.table');
+      
+      // Realizar la petición AJAX para obtener las agendas filtradas
+      // y actualizar la tabla de consultas con los resultados
+      
+      // Ejemplo de cómo actualizar la tabla con los resultados
+      var resultadosHTML = '<thead>...</thead><tbody>...</tbody>';
+      table.innerHTML = resultadosHTML;
+  });
+</script>
+
+<script>
+  function confirmarEliminacion(consultaId) {
+    Swal.fire({
+      "title": "Confirmación",
+      "text": "¿Estás seguro de eliminar este agendamiento?",
+      "icon": "question",
+      "showCancelButton": true,
+      "confirmButtonColor": "#dc3545",
+      "confirmButtonText": "Confirmar",
+      "cancelButtonText": "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("eliminar-form-" + consultaId).submit();
+      }
+    });
+  }
+</script>
+
+
+
+
 
 
 

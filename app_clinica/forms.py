@@ -61,11 +61,11 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+from django import forms
+from django.utils import timezone
+from django.db.models import Q
+
 class AgendamientoForm(forms.ModelForm):
-    nombre = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
-    apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'style': 'text-transform: uppercase;', 'disabled': 'disabled'}))
-    rut = forms.CharField(max_length=12, required=False, widget=forms.TextInput(attrs={'class': 'form-control rut-input', 'disabled': 'disabled'}))
-    correo = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly','disabled': 'disabled'}))
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     agenda = forms.ModelChoiceField(queryset=Agenda.objects.none(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     mensaje = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}), required=True)
@@ -76,40 +76,39 @@ class AgendamientoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if self.request:
-            user = self.request.user
-            self.fields['nombre'].widget.attrs['value'] = user.first_name
-            self.fields['nombre'].initial = user.first_name
-
-            self.fields['apellido'].widget.attrs['value'] = user.last_name
-            self.fields['apellido'].initial = user.last_name
-
-            self.fields['correo'].widget.attrs['value'] = user.email
-            self.fields['correo'].initial = user.email
-
             self.fields['mascota'].queryset = Mascota.objects.filter(dueno__user=self.request.user)
 
-            fecha_actual = timezone.now().date()
+        self.fields['agenda'].queryset = Agenda.objects.none()
+
+        if self.is_bound and 'categoria' in self.data:
+            categoria_id = self.data['categoria']
             agendas_disponibles = Agenda.objects.filter(
-                Q(dia__gte=fecha_actual) &
+                Q(categoria=categoria_id) &
+                Q(dia__gte=timezone.now().date()) &
                 Q(agendamiento__isnull=True)
             )
             self.fields['agenda'].queryset = agendas_disponibles
+        elif self.instance.pk:
+            categoria_id = self.instance.categoria_id
+            agendas_disponibles = Agenda.objects.filter(
+                Q(categoria=categoria_id) &
+                Q(dia__gte=timezone.now().date()) &
+                Q(agendamiento__isnull=True)
+            )
+            self.fields['agenda'].queryset = agendas_disponibles
+            self.initial['agenda'] = self.instance.agenda_id
 
-            # Obtener el RUT del cliente y establecerlo como valor inicial del campo "rut"
-            cliente = Cliente.objects.get(user=self.request.user)
-            self.fields['rut'].initial = cliente.rut
-
-        self.fields['cliente'].widget = forms.HiddenInput()
-        self.fields['cliente'].required = False
+    def clean_categoria(self):
+        categoria = self.cleaned_data['categoria']
+        if categoria:
+            return categoria
+        else:
+            raise forms.ValidationError('Debe seleccionar una categoría.')
 
     def save(self, commit=True):
         instance = super().save(commit=False)
         if self.request:
             user = self.request.user
-            instance.cliente_id = user.id
-            instance.nombre = user.first_name
-            instance.apellido = user.last_name
-            instance.correo = user.email
             instance.cliente = user
         if commit:
             instance.save()
@@ -117,7 +116,7 @@ class AgendamientoForm(forms.ModelForm):
 
     class Meta:
         model = Agendamiento
-        fields = '__all__'
+        exclude = ['cliente']
 
 class ContactoForm(forms.ModelForm):
     nombre = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'nombre', 'name': 'nombre'}))
@@ -194,6 +193,62 @@ class AgregarMascotaForm(forms.ModelForm):
             'microchip': forms.NumberInput(attrs={'class': 'form-control', 'id': 'microchip', 'placeholder': 'Si no tiene chip, déjelo en cero'}),
             'fech_naci': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'fecha_nac', 'required': 'true'})
         }
+
+class EditarAgendamientoForm(forms.ModelForm):
+    class Meta:
+        model = Agendamiento
+        fields = ['mascota', 'categoria', 'agenda', 'mensaje']
+        widgets = {
+            'mascota': forms.Select(attrs={'class': 'form-control'}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
+            'agenda': forms.Select(attrs={'class': 'form-control'}),
+            'mensaje': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+        if self.request and self.request.user.is_authenticated:
+            user = self.request.user
+            cliente = Cliente.objects.get(user=user)
+            self.fields['mascota'].queryset = Mascota.objects.filter(dueno=cliente)
+
+        if self.is_valid():  # Verificar si el formulario es válido
+            # Obtener la categoría seleccionada si ya está asignada al agendamiento
+            categoria_id = self.instance.categoria_id if self.instance.pk else None
+
+            if categoria_id:
+                # Filtrar las agendas disponibles según la categoría seleccionada
+                agendas_disponibles = Agenda.objects.filter(
+                    Q(categoria=categoria_id) &
+                    Q(dia__gte=timezone.now().date()) &
+                    Q(agendamiento__isnull=True)
+                )
+                self.fields['agenda'].queryset = agendas_disponibles
+
+        # Establecer el valor inicial del campo 'agenda' si ya está asignada
+        if self.instance.pk:
+            self.fields['agenda'].initial = self.instance.agenda
+
+
+
+
+
+
+from django import forms
+from .models import Diagnostico
+
+class DiagnosticoForm(forms.ModelForm):
+    class Meta:
+        model = Diagnostico
+        fields = ['diagnostico']
+
+
+
+
+
+
 
 
 

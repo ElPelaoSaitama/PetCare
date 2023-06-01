@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.fields.related import ForeignKey
 import locale
 from django.db.models.fields.related import ForeignKey, OneToOneField
+from django.utils import timezone
 
 
 # Tabla del tipo de animal
@@ -52,13 +53,17 @@ class Genero(models.Model):
 
 
 # Tabla medico veterinario
+
 class Veterinario(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.nombre
+
+
 
 # Tabla peluquera/o
 class Peluquera(models.Model):
@@ -161,15 +166,24 @@ class Agenda(models.Model):
 # Tabla de agendamiento
 class Agendamiento(models.Model):
     cliente = models.ForeignKey(User, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    rut = models.CharField(max_length=12)
-    correo = models.EmailField()
     mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
     mensaje = models.TextField()
 
     def __str__(self):
-        return self.nombre
+        return self.cliente.get_full_name()  # O cualquier otro campo identificativo que desees mostrar
+
+
+# Tabla diagnositos de mascotas
+class Diagnostico(models.Model):
+    agendamiento = models.ForeignKey(Agendamiento, on_delete=models.CASCADE)
+    diagnostico = models.TextField()
+    veterinario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Diagnóstico {self.id}"
+
+
 

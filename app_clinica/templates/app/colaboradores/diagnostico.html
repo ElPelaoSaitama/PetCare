@@ -1,0 +1,28 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Diagnostico</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+    <div id="diagnostico-section">
+        {% for agendamiento in agendamientos %}
+            <div class="diagnostico-item">
+                <p>Agendamiento ID: {{ agendamiento.id }}</p>
+                <p>Nombre Mascota: {{ agendamiento.mascota.nombre }}</p>
+                <textarea id="diagnostico-input-{{ agendamiento.id }}" placeholder="Ingrese el diagnóstico"></textarea>
+                <button class="guardar-diagnostico" data-agendamiento-id="{{ agendamiento.id }}">Guardar diagnóstico</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock dinamico %}
+
+
+{% block js %}
+
+{% endblock %}
+    

@@ -6,8 +6,11 @@ from django.forms import DateInput
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm
-from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm, DiagnosticoForm, EditarAgendamientoForm
+from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente, Agenda, Diagnostico
+from django.http import JsonResponse
+from django.utils import timezone
+
 
 # importe para pdf
 from io import BytesIO
@@ -27,11 +30,18 @@ from django.conf import settings
 #Importes para js del perfil
 from django.views.generic import ListView
 
+from django.contrib.auth.decorators import user_passes_test
+
+
 # Create your views here.
+def es_veterinario(user):
+    return user.groups.filter(name='Veterinarios').exists()
+
 
 def home(request):
     data = {
-        'form': ContactoForm()
+        'form': ContactoForm(),
+        'show_link' : not es_veterinario(request.user)
     }
 
     if request.method == 'POST':
@@ -55,18 +65,39 @@ def agendamiento(request):
     }
 
     if request.method == 'POST':
-        formulario = AgendamientoForm(request.POST, request.FILES, request=request)  # Pasa el argumento request al instanciar el formulario
+        formulario = AgendamientoForm(request.POST, request.FILES, request=request)
         if formulario.is_valid():
             formulario.save()
-            messages.success(request,'Se ha agendado la hora.')
-            return redirect('app_clinica:agendamiento')  # Redirige a la misma página para generar un nuevo formulario vacío
+            messages.success(request, 'Se ha agendado la hora.')
+            return redirect('app_clinica:agendamiento')
         else:
             data["form"] = formulario
+            print(formulario.errors)  # Imprimir los errores del formulario en la consola para depuración
     else:
-        formulario = AgendamientoForm(request=request)  # Pasa el argumento request al instanciar el formulario
+        formulario = AgendamientoForm(request=request)
         data["form"] = formulario
 
     return render(request, 'app/agendamiento.html', data)
+
+def get_agendas(request):
+    categoria_id = request.GET.get('categoria_id')
+    agendas_disponibles = Agenda.objects.filter(
+        categoria_id=categoria_id,
+        dia__gte=timezone.now().date(),
+        agendamiento__isnull=True
+    )
+    options = [{'id': agenda.id, 'nombre': str(agenda)} for agenda in agendas_disponibles]
+    return JsonResponse(options, safe=False)
+
+def obtener_agendas(request):
+    categoria_id = request.GET.get('categoria_id')
+    agendas_disponibles = Agenda.objects.filter(
+        categoria_id=categoria_id,
+        dia__gte=timezone.now().date(),
+        agendamiento__isnull=True
+    )
+    options = [{'id': agenda.id, 'nombre': str(agenda)} for agenda in agendas_disponibles]
+    return JsonResponse(options, safe=False)
 
 def register(request):
     data = {
@@ -113,33 +144,70 @@ def contact(request):
 def user(request):
     return render(request,"app/user.html")   
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Cliente, Mascota, Agendamiento
+from django.utils import timezone
+from datetime import datetime, date
 
 @login_required
 def historialMedico(request):
     cliente = request.user.cliente
     mascotas = Mascota.objects.filter(dueno=cliente)
-    consultas = Agendamiento.objects.filter(mascota__in=mascotas)
-    
-    # Obtener las fechas de agendamiento usando una lista de comprensión
-    fechas_agendamiento = [consulta.agenda.dia for consulta in consultas]
-    
+    consultas = Agendamiento.objects.filter(mascota__in=mascotas).order_by('-agenda__dia')
+
+    detalles_consulta = []
+    fecha_actual = date.today()
+
+    for consulta in consultas:
+        mascota_nombre = consulta.mascota.nombre
+        agenda = consulta.agenda
+        horario_inicio, horario_fin = agenda.get_horario_display().split(" a ")
+        horario = f"{horario_inicio} a {horario_fin}"
+
+        if agenda.dia < fecha_actual:
+            detalles_consulta.append((consulta, mascota_nombre, horario, True))
+        else:
+            detalles_consulta.append((consulta, mascota_nombre, horario, False))
+
     context = {
-        'consultas': consultas,
-        'fechas_agendamiento': zip(consultas, fechas_agendamiento)
+        'detalles_consulta': detalles_consulta
     }
     return render(request, 'app/historial_clinico.html', context)
 
 
 
+@login_required
+def eliminarAgendamiento(request, consulta_id):
+    consulta = get_object_or_404(Agendamiento, id=consulta_id)
+    
+    # Verificar si el usuario autenticado es el propietario del agendamiento
+    if request.user == consulta.cliente:
+        # Agregar mensaje de confirmación antes de eliminar
+        messages.info(request, 'Se ha eliminado el agendamiento')
+        consulta.delete()
+    
+    return redirect('app_clinica:historial_medico')  # Redirigir a la página del historial médico después de eliminar
 
+@login_required
+def editarAgendamiento(request, consulta_id):
+    agendamiento = Agendamiento.objects.get(id=consulta_id)
 
+    if request.method == 'POST':
+        form = EditarAgendamientoForm(request.POST, instance=agendamiento, request=request)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Agendamiento modificado exitosamente.')
+            return redirect('/historial-medico/')
+        else:
+            print(form.errors)  # Imprimir los errores de validación del formulario
+    else:
+        form = EditarAgendamientoForm(instance=agendamiento, request=request)
+        form.fields['agenda'].queryset = Agenda.objects.filter(categoria=agendamiento.categoria)
 
+    print(form.errors)  # Imprimir los errores de validación del formulario antes de renderearlo
 
-
-
+    context = {
+        'form': form
+    }
+    return render(request, 'app/editar_agendamiento.html', context)
 
 
 @login_required
@@ -285,6 +353,59 @@ def editarPassword(request):
 
     context = {'form': form}
     return render(request, 'app/change_password.html', context)
+
+def colaborador_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.groups.filter(name='Veterinarios').exists():
+            login(request, user)
+            return redirect('app_clinica:colaborador')  # Redirige a la página de inicio del colaborador
+        else:
+            # Manejar error de inicio de sesión
+            return render(request, 'app/colaboradores/colaborador_login.html', {'error': 'Credenciales inválidas'})
+    else:
+        return render(request, 'app/colaboradores/colaborador_login.html')
+
+
+# Seccion solo para colaboradores
+
+@login_required      
+def colaborador(request):
+    return render(request,"app/colaboradores/dashboard_colaborador.html")
+
+
+
+# Seccion solo para veterinarios
+
+def is_veterinario(user):
+    return user.groups.filter(name='Veterinarios').exists()
+
+@login_required
+@user_passes_test(is_veterinario)
+def citasColaborador(request):
+    agendamientos = Agendamiento.objects.select_related('mascota', 'categoria', 'agenda').all()
+    return render(request, "app/colaboradores/citas_colaborador.html", {'agendamientos': agendamientos})
+
+@login_required
+@user_passes_test(is_veterinario)
+def diagnostico(request, consulta_id):
+    consulta = get_object_or_404(Diagnostico, id=consulta_id)
+    
+    if request.method == 'POST':
+        form = DiagnosticoForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            return redirect('app_clinica:citas_colaborador')
+    else:
+        form = DiagnosticoForm(instance=consulta)
+    
+    return render(request, 'app/colaboradores/diagnostico.html', {'form': form})
+
+
+
+
 
 
 
