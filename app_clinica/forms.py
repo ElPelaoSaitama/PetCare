@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda, Cliente, Genero, Especie, Raza
+from .models import Agendamiento, Categoria , Veterinario, Peluquera, Contacto, Mascota, Agenda, Cliente, Genero, Especie, Raza, Diagnostico
 from django.forms.widgets import DateInput
 from django.forms import DateInput
 from django.contrib.auth.forms import PasswordChangeForm
@@ -60,10 +60,6 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
-from django import forms
-from django.utils import timezone
-from django.db.models import Q
 
 class AgendamientoForm(forms.ModelForm):
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True, widget=forms.Select(attrs={'class': 'form-control'}))
@@ -231,18 +227,19 @@ class EditarAgendamientoForm(forms.ModelForm):
         if self.instance.pk:
             self.fields['agenda'].initial = self.instance.agenda
 
-
-
-
-
-
-from django import forms
-from .models import Diagnostico
-
 class DiagnosticoForm(forms.ModelForm):
+    diagnostico = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese el diagnóstico'}),
+        label='',
+        required=True,
+    )
+    
     class Meta:
         model = Diagnostico
         fields = ['diagnostico']
+
+
+
 
 
 

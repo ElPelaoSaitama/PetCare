@@ -10,6 +10,7 @@ from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, Clien
 from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente, Agenda, Diagnostico
 from django.http import JsonResponse
 from django.utils import timezone
+from datetime import datetime, date
 
 
 # importe para pdf
@@ -144,9 +145,6 @@ def contact(request):
 def user(request):
     return render(request,"app/user.html")   
 
-from django.utils import timezone
-from datetime import datetime, date
-
 @login_required
 def historialMedico(request):
     cliente = request.user.cliente
@@ -171,8 +169,6 @@ def historialMedico(request):
         'detalles_consulta': detalles_consulta
     }
     return render(request, 'app/historial_clinico.html', context)
-
-
 
 @login_required
 def eliminarAgendamiento(request, consulta_id):
@@ -209,7 +205,6 @@ def editarAgendamiento(request, consulta_id):
     }
     return render(request, 'app/editar_agendamiento.html', context)
 
-
 @login_required
 def mascotaCliente(request):
     cliente = request.user.cliente
@@ -236,10 +231,14 @@ def editar_mascota(request, mascota_id):
 
     return render(request, 'app/mascota/editar_mascota.html', {'form': form})
 
+
 @login_required
 def generar_pdf(request, mascota_id):
     # Obtén la mascota a partir de su ID
     mascota = get_object_or_404(Mascota, id=mascota_id)
+
+    # Obtén los diagnósticos asociados a la mascota
+    diagnosticos = Diagnostico.objects.filter(agendamiento__mascota=mascota)
 
     # Crea un objeto BytesIO para almacenar el PDF generado
     buffer = BytesIO()
@@ -275,14 +274,43 @@ def generar_pdf(request, mascota_id):
     microchip = f'Microchip: {mascota.microchip}'
 
     elements.append(Paragraph(dueno_nombre, estilo_contenido))
+    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph(especie, estilo_contenido))
+    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph(raza, estilo_contenido))
+    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph(sexo, estilo_contenido))
+    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph(fecha_nacimiento, estilo_contenido))
+    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph(microchip, estilo_contenido))
-
-    # Agrega espacio adicional
     elements.append(Spacer(1, 0.5*inch))
+
+    # Agrega los diagnósticos al PDF
+    elements.append(Paragraph("Diagnósticos:", estilo_titulo))
+    for diagnostico in diagnosticos:
+        agendamiento = diagnostico.agendamiento
+        agenda = agendamiento.agenda
+        fecha_agendamiento = agenda.dia.strftime('%d/%m/%Y')
+        nombre_veterinario = ""
+        if agenda.veterinario:
+            nombre_veterinario = agenda.veterinario.user.get_full_name()
+        elements.append(Spacer(1, 0.25*inch))
+
+
+
+        # Agrega fecha de agendamiento y veterinario
+        elements.append(Paragraph(f"Fecha de Agendamiento: {fecha_agendamiento}", estilo_contenido))
+        elements.append(Paragraph(f"Veterinario: {nombre_veterinario}", estilo_contenido))
+
+        # Agrega el texto del diagnóstico
+        elements.append(Spacer(1, 0.25*inch))
+        diagnostico_texto = f"Diagnóstico: {diagnostico.diagnostico}"
+        elements.append(Paragraph(diagnostico_texto, estilo_contenido))
+
+
+
+
 
     # Genera el PDF
     doc.build(elements)
@@ -385,23 +413,46 @@ def is_veterinario(user):
 @login_required
 @user_passes_test(is_veterinario)
 def citasColaborador(request):
-    agendamientos = Agendamiento.objects.select_related('mascota', 'categoria', 'agenda').all()
+    veterinario = request.user.veterinario  # Obtener el veterinario actualmente logeado
+    agendamientos = Agendamiento.objects.select_related('mascota', 'categoria', 'agenda').filter(agenda__veterinario=veterinario)
+
+    for agendamiento in agendamientos:
+        agendamiento.tiene_diagnostico = agendamiento.diagnostico_set.exists()
+
     return render(request, "app/colaboradores/citas_colaborador.html", {'agendamientos': agendamientos})
 
 @login_required
 @user_passes_test(is_veterinario)
 def diagnostico(request, consulta_id):
-    consulta = get_object_or_404(Diagnostico, id=consulta_id)
-    
+    agendamiento = Agendamiento.objects.get(id=consulta_id)
+
     if request.method == 'POST':
-        form = DiagnosticoForm(request.POST, instance=consulta)
+        form = DiagnosticoForm(request.POST)  # Inicializa el formulario con los datos recibidos
         if form.is_valid():
-            form.save()
-            return redirect('app_clinica:citas_colaborador')
+            diagnostico_text = form.cleaned_data['diagnostico']
+            veterinario = request.user
+            
+            # Crea una instancia de Diagnostico y guárdala en la base de datos
+            diagnostico = Diagnostico(agendamiento=agendamiento, diagnostico=diagnostico_text, veterinario=veterinario)
+            diagnostico.save()
+            
+            # Agrega un mensaje de éxito
+            messages.success(request, 'El diagnóstico se guardó correctamente.')
+            
+            # Redirige al usuario a la página de detalles del agendamiento o a donde desees
+            return redirect('/citas-colaborador/')
+            
     else:
-        form = DiagnosticoForm(instance=consulta)
-    
-    return render(request, 'app/colaboradores/diagnostico.html', {'form': form})
+        form = DiagnosticoForm()  # Crea una instancia vacía del formulario
+
+    context = {
+        'agendamiento': agendamiento,
+        'form': form,  # Agrega el formulario al contexto
+    }
+    return render(request, 'app/colaboradores/diagnostico.html', context)
+
+
+
 
 
 

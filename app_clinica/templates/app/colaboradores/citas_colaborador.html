@@ -47,6 +47,7 @@
 </style>
 
 <div class="table-wrapper">
+    {% if agendamientos %}
     <table class="table">
         <thead>
             <tr>
@@ -67,16 +68,26 @@
                     <td>{{ agendamiento.categoria.nombre }}</td>
                     <td>{{ agendamiento.mascota.nombre.title }}</td>
                     <td class="actions">
-                        <a href="{% url 'app_clinica:diagnostico' consulta_id=agendamiento.id %}"><button><i class="fas fa-edit"></i></button></a>
-                        <button class="diagnostico-button" data-agendamiento-id="{{ agendamiento.id }}"><i class="fas fa-info-circle"></i></button>
+                        {% if agendamiento.tiene_diagnostico %}
+                        <button class="check-button" data-toggle="tooltip" title="Diagnóstico ya escrito"><i class="fas fa-check"></i></button>
+                        {% else %}
+                            <a href="{% url 'app_clinica:diagnostico' consulta_id=agendamiento.id %}"><button><i class="fas fa-edit"></i></button></a>
+                        {% endif %}
+                        <a href="{% url 'app_clinica:generar_pdf' mascota_id=agendamiento.mascota.id %}" target="_blank">
+                            <button class="diagnostico-button" data-agendamiento-id="{{ agendamiento.id }}" data-toggle="tooltip" title="Descargar Ficha">
+                                <i class="far fa-file-pdf"></i>
+                            </button>
+                        </a>
+                        
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <h3 class="text-center">No tienes citas actualmente.</h3>
+    {% endif %}
 </div>
-
-
 
 {% endblock dinamico %}
 

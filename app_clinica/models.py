@@ -161,7 +161,7 @@ class Agenda(models.Model):
         locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
         mes = self.dia.strftime("%B").capitalize()
         locale.setlocale(locale.LC_TIME, '')
-        return f'{mes} {self.dia.day} {self.dia.year} - {self.get_horario_display()} - Categoria: {self.categoria.nombre}'
+        return f'{mes} {self.dia.day} {self.dia.year} - {self.get_horario_display()} - Categoria: {self.categoria.nombre} - Doctor: {self.veterinario.nombre}'
 
 # Tabla de agendamiento
 class Agendamiento(models.Model):
@@ -183,7 +183,7 @@ class Diagnostico(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Diagnóstico {self.id}"
+        return f"Diagnóstico {self.id} {self.agendamiento}"
 
 
 

@@ -9,17 +9,25 @@
 {% endblock titulo %}
 
 {% block dinamico %}
-    <div id="diagnostico-section">
-        {% for agendamiento in agendamientos %}
-            <div class="diagnostico-item">
-                <p>Agendamiento ID: {{ agendamiento.id }}</p>
-                <p>Nombre Mascota: {{ agendamiento.mascota.nombre }}</p>
-                <textarea id="diagnostico-input-{{ agendamiento.id }}" placeholder="Ingrese el diagnóstico"></textarea>
-                <button class="guardar-diagnostico" data-agendamiento-id="{{ agendamiento.id }}">Guardar diagnóstico</button>
+    <h1>Diagnóstico para la mascota: {{ agendamiento.mascota.nombre }}</h1>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-12 text-center">
+                {{ form.diagnostico }}
             </div>
-        {% endfor %}
-    </div>
+        </div>
+        <div class="text-center">
+            <br>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
 {% endblock dinamico %}
+
+
+
+
 
 
 {% block js %}
