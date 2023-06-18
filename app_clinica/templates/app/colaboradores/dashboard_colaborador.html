@@ -21,14 +21,34 @@
             <div class="col-lg-5 d-flex align-items-stretch">
               <div class="info">
 
-                <div class="phone" >
-                 <a href="{% url 'app_clinica:citas_colaborador' %}">
-                    <i class="fa-solid fa-calendar-days"></i>
-                  <h4>Tus citas</h4>
-                  <p>Citas agendadas contigo</p>
-                </a>
+                {% if is_veterinario %}
+                <div class="phone">
+                    <a href="{% url 'app_clinica:citas_colaborador' %}">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <h4>Tus citas</h4>
+                        <p>Citas agendadas contigo</p>
+                    </a>
                 </div>
+                {% endif %}
                 
+                {% if is_colaborador %}
+                <div class="phone">
+                    <a href="{% url 'app_clinica:recordatorio' %}">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <h4>Agendamientos</h4>
+                        <p>Proximos agendamientos</p>
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="phone">
+                  <a href="{% url 'app_clinica:buscar_clientes' %}">
+                      <i class="fa-solid fa-people-group"></i>
+                      <h4>Clientes</h4>
+                      <p>Buscar clientes en el sistema</p>
+                  </a>
+              </div>
+
               </div>
             </div>
 

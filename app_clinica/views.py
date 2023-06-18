@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required , permission_required
 from django.contrib.auth import authenticate, login
 from django.forms import DateInput
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm, DiagnosticoForm, EditarAgendamientoForm
+from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm, DiagnosticoForm, EditarAgendamientoForm,EditAgendamientoColaborador,EditarClienteForm
 from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente, Agenda, Diagnostico
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import datetime, date
-
+from django.contrib.auth.models import User, Group
+from django.db.models import Q
+from django.db.models.functions import Upper
 
 # importe para pdf
 from io import BytesIO
@@ -30,13 +31,44 @@ from django.conf import settings
 
 #Importes para js del perfil
 from django.views.generic import ListView
-
 from django.contrib.auth.decorators import user_passes_test
 
 
 # Create your views here.
 def es_veterinario(user):
     return user.groups.filter(name='Veterinarios').exists()
+def es_colaboradores(user):
+    return user.groups.filter(name='Colaboradores').exists()
+
+
+def custom_login(request):
+    if request.method == 'POST':
+        # Obtén los valores del formulario
+        email = request.POST['email']
+        password = request.POST['password']
+
+        # Autenticar al usuario
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            # Credenciales válidas, el usuario existe y la contraseña es correcta
+            # Inicia sesión al usuario
+            login(request, user)
+            # Redirige a la página de inicio o a la página deseada después del inicio de sesión exitoso
+            return redirect('app_clinica:home')
+        else:
+            # Credenciales incorrectas
+            # Muestra un mensaje de error utilizando el sistema de mensajes de Django
+            error_message = 'Credenciales incorrectas'
+            messages.error(request, error_message)
+
+    # Renderiza la página de inicio de sesión con los mensajes
+    return render(request, 'registration/login.html')
+
+
+
+
+
 
 
 def home(request):
@@ -231,41 +263,28 @@ def editar_mascota(request, mascota_id):
 
     return render(request, 'app/mascota/editar_mascota.html', {'form': form})
 
-
 @login_required
 def generar_pdf(request, mascota_id):
-    # Obtén la mascota a partir de su ID
     mascota = get_object_or_404(Mascota, id=mascota_id)
+    diagnosticos = Diagnostico.objects.filter(agendamiento__mascota=mascota).select_related('agendamiento__categoria')
 
-    # Obtén los diagnósticos asociados a la mascota
-    diagnosticos = Diagnostico.objects.filter(agendamiento__mascota=mascota)
-
-    # Crea un objeto BytesIO para almacenar el PDF generado
     buffer = BytesIO()
-
-    # Establece el tamaño de página y márgenes
     doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=inch/2, leftMargin=inch/2, topMargin=inch/2, bottomMargin=inch/2)
 
-    # Lista para almacenar los elementos del PDF
     elements = []
-
-    # Estilos para el título y el contenido
     styles = getSampleStyleSheet()
     estilo_titulo = styles['Title']
     estilo_contenido = styles['BodyText']
 
-    # Agrega el título al PDF
     titulo = f'Ficha de mascota - {mascota.nombre.capitalize()}'
     elements.append(Paragraph(titulo, estilo_titulo))
     elements.append(Spacer(1, 0.5*inch))
 
-    # Agrega la imagen al PDF
-    ruta_imagen = 'app_clinica/static/app/img/LogoPetCare.png'  # Ruta de la imagen
+    ruta_imagen = 'app_clinica/static/app/img/LogoPetCare.png'
     imagen = Image(ruta_imagen, width=2*inch, height=2*inch)
     elements.append(imagen)
     elements.append(Spacer(1, 0.5*inch))
 
-    # Agrega los campos de la mascota al PDF
     dueno_nombre = f'Dueño: {mascota.dueno.user.first_name.capitalize()} {mascota.dueno.user.last_name.capitalize()}'
     especie = f'Especie: {mascota.especie}'
     raza = f'Raza: {mascota.raza}'
@@ -286,39 +305,25 @@ def generar_pdf(request, mascota_id):
     elements.append(Paragraph(microchip, estilo_contenido))
     elements.append(Spacer(1, 0.5*inch))
 
-    # Agrega los diagnósticos al PDF
     elements.append(Paragraph("Diagnósticos:", estilo_titulo))
     for diagnostico in diagnosticos:
         agendamiento = diagnostico.agendamiento
-        agenda = agendamiento.agenda
-        fecha_agendamiento = agenda.dia.strftime('%d/%m/%Y')
-        nombre_veterinario = ""
-        if agenda.veterinario:
-            nombre_veterinario = agenda.veterinario.user.get_full_name()
+        categoria = agendamiento.categoria
+
+        fecha_agendamiento = agendamiento.agenda.dia.strftime('%d/%m/%Y')
+        nombre_veterinario = agendamiento.agenda.veterinario.user.get_full_name()
+
         elements.append(Spacer(1, 0.25*inch))
-
-
-
-        # Agrega fecha de agendamiento y veterinario
         elements.append(Paragraph(f"Fecha de Agendamiento: {fecha_agendamiento}", estilo_contenido))
-        elements.append(Paragraph(f"Veterinario: {nombre_veterinario}", estilo_contenido))
-
-        # Agrega el texto del diagnóstico
+        elements.append(Paragraph(f"Categoría: {categoria.nombre}", estilo_contenido))
+        elements.append(Paragraph(f"Veterinario: {nombre_veterinario.title()}", estilo_contenido))
         elements.append(Spacer(1, 0.25*inch))
-        diagnostico_texto = f"Diagnóstico: {diagnostico.diagnostico}"
-        elements.append(Paragraph(diagnostico_texto, estilo_contenido))
+        elements.append(Paragraph(f"Diagnóstico: {diagnostico.diagnostico.capitalize()}", estilo_contenido))
 
-
-
-
-
-    # Genera el PDF
     doc.build(elements)
 
-    # Vuelve al inicio del objeto BytesIO
     buffer.seek(0)
 
-    # Crea una respuesta de archivo para descargar el PDF
     return FileResponse(buffer, as_attachment=True, filename=f'Ficha-{mascota.nombre.capitalize()}.pdf')
 
 @login_required
@@ -382,36 +387,190 @@ def editarPassword(request):
     context = {'form': form}
     return render(request, 'app/change_password.html', context)
 
+
+# Seccion solo para colaboradores
 def colaborador_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        if user is not None and user.groups.filter(name='Veterinarios').exists():
+        
+        # Verificar si el usuario es válido y pertenece a uno de los grupos permitidos
+        if user is not None and (Group.objects.filter(user=user, name='Colaboradores').exists() or 
+                                 Group.objects.filter(user=user, name='Veterinarios').exists()):
             login(request, user)
             return redirect('app_clinica:colaborador')  # Redirige a la página de inicio del colaborador
         else:
             # Manejar error de inicio de sesión
-            return render(request, 'app/colaboradores/colaborador_login.html', {'error': 'Credenciales inválidas'})
+            messages.error(request, 'Credenciales inválidas o usuario no es colaborador')
+            return redirect('app_clinica:colaborador_login')  # Redirige al formulario de inicio de sesión
     else:
         return render(request, 'app/colaboradores/colaborador_login.html')
-
-
-# Seccion solo para colaboradores
-
-@login_required      
-def colaborador(request):
-    return render(request,"app/colaboradores/dashboard_colaborador.html")
-
-
-
-# Seccion solo para veterinarios
 
 def is_veterinario(user):
     return user.groups.filter(name='Veterinarios').exists()
 
+def is_veterinario_o_colaborador(user):
+    return user.groups.filter(name__in=['Veterinarios', 'Colaboradores']).exists()
+
 @login_required
-@user_passes_test(is_veterinario)
+def colaborador(request):
+    user = request.user
+    is_veterinario = user.groups.filter(name='Veterinarios').exists()
+    is_colaborador = user.groups.filter(name='Colaboradores').exists()
+
+    context = {
+        'is_veterinario': is_veterinario,
+        'is_colaborador': is_colaborador,
+    }
+    print(is_veterinario)
+    return render(request, "app/colaboradores/dashboard_colaborador.html", context)
+
+def obtener_horario(horario):
+    horarios = dict(Agenda.HORARIOS)
+    return horarios.get(horario)
+
+import smtplib
+from email.mime.text import MIMEText
+@login_required
+def enviar_correo(request, agendamiento_id):
+    agendamiento = Agendamiento.objects.get(id=agendamiento_id)
+    cliente = agendamiento.mascota.dueno
+    dia_agendamiento = agendamiento.agenda.dia
+    horario_agendamiento = agendamiento.agenda.get_horario_display()
+
+    # Construir el mensaje de correo electrónico
+    mensaje = f"""
+    Estimado {cliente.user.get_full_name().title()},
+
+    ¡Gracias por confiar en PetCare para el cuidado de su mascota!
+
+    Le recordamos que tiene una cita programada para el día {dia_agendamiento} a las {horario_agendamiento} con el doctor {agendamiento.agenda.veterinario.user.get_full_name().title()}.
+
+    Nos complace poder atenderle y brindarle el mejor servicio para el bienestar de su mascota. Si tiene alguna pregunta o necesita realizar alguna modificación, no dude en contactarnos.
+
+    ¡Esperamos verlos pronto en nuestras instalaciones!
+
+    Saludos cordiales,
+    El equipo de PetCare
+    """
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login('petcarevetter@gmail.com', 'tsbnnvdijldznurx')
+
+        msg = MIMEText(mensaje)
+        msg['Subject'] = 'Recordatorio de Cita'
+        msg['From'] = 'petcarevetter@gmail.com'
+        msg['To'] = cliente.user.email
+
+        server.send_message(msg)
+        server.quit()
+
+        messages.success(request, 'Correo electrónico enviado con éxito.')
+        return redirect('app_clinica:recordatorio')
+        
+
+    except Exception as e:
+        # Manejar cualquier error que ocurra durante el envío del correo electrónico
+        messages.error(request, 'Error al enviar el correo electrónico.')
+        return redirect('app_clinica:recordatorio') 
+
+@login_required
+def recordatorio(request):
+    agendamientos = Agendamiento.objects.order_by('-agenda__dia')
+    user = request.user
+    is_colaborador = user.groups.filter(name='Colaboradores').exists()
+
+    context = {
+        'agendamientos': agendamientos,
+        'is_colaborador': is_colaborador,
+        'obtener_horario': obtener_horario,
+    }
+    return render(request, 'app/colaboradores/recordatorio.html', context)
+
+@login_required
+def editar_agendamiento(request, agendamiento_id):
+    agendamiento = get_object_or_404(Agendamiento, id=agendamiento_id)
+    user = request.user
+    is_colaborador = user.groups.filter(name='Colaboradores').exists()
+
+    if request.method == 'POST':
+        form = EditAgendamientoColaborador(request.POST, instance=agendamiento)
+        if form.is_valid():
+            form.save()
+            return redirect('app_clinica:recordatorio')
+    else:
+        form = EditAgendamientoColaborador(instance=agendamiento)
+
+    form.request = request  # Agregar el objeto request al formulario
+
+    context = {
+        'form': form,
+        'agendamiento': agendamiento,
+        'is_colaborador': is_colaborador,
+    }
+
+    return render(request, 'app/colaboradores/editar_agendamiento.html', context)
+
+@login_required
+def buscar_clientes(request):
+    query = request.GET.get('q')
+
+    if query:
+        clientes = Cliente.objects.filter(
+            Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query),
+            user__groups__isnull=True
+        ).order_by('user__first_name', 'user__last_name')
+    else:
+        clientes = Cliente.objects.filter(user__groups__isnull=True).order_by(Upper('user__first_name'), Upper('user__last_name'))
+
+    user = request.user
+    is_colaborador = user.groups.filter(name='Colaboradores').exists()
+    is_veterinario = user.groups.filter(name='Veterinarios').exists()
+
+    context = {
+        'clientes': clientes,
+        'is_colaborador': is_colaborador,
+        'is_veterinario': is_veterinario,
+    }
+
+    return render(request, 'app/colaboradores/buscar_clientes.html', context)
+
+@login_required
+def editar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    nombre_cliente = cliente.user.get_full_name()
+
+    user = request.user
+    is_colaborador = user.groups.filter(name='Colaboradores').exists()
+    is_veterinario = user.groups.filter(name='Veterinarios').exists()
+
+    context = {
+        'is_colaborador': is_colaborador,
+        'is_veterinario': is_veterinario,
+    }
+    
+    if request.method == 'POST':
+        form = EditarClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'El cliente {nombre_cliente.title()} se ha editado correctamente.')
+            return redirect('app_clinica:buscar_clientes')
+    else:
+        form = EditarClienteForm(instance=cliente)
+    
+    context['form'] = form
+    context['cliente'] = cliente
+    context['nombre_cliente'] = nombre_cliente
+    
+    return render(request, 'app/colaboradores/editar_cliente.html', context)
+
+
+# Seccion solo para veterinarios
+
+@login_required
 def citasColaborador(request):
     veterinario = request.user.veterinario  # Obtener el veterinario actualmente logeado
     agendamientos = Agendamiento.objects.select_related('mascota', 'categoria', 'agenda').filter(agenda__veterinario=veterinario)
@@ -419,7 +578,12 @@ def citasColaborador(request):
     for agendamiento in agendamientos:
         agendamiento.tiene_diagnostico = agendamiento.diagnostico_set.exists()
 
-    return render(request, "app/colaboradores/citas_colaborador.html", {'agendamientos': agendamientos})
+    is_veterinario = request.user.groups.filter(name='Veterinarios').exists()
+    context = {
+        'agendamientos': agendamientos,
+        'is_veterinario': is_veterinario
+    }
+    return render(request, "app/colaboradores/citas_colaborador.html", context)
 
 @login_required
 @user_passes_test(is_veterinario)
@@ -427,29 +591,29 @@ def diagnostico(request, consulta_id):
     agendamiento = Agendamiento.objects.get(id=consulta_id)
 
     if request.method == 'POST':
-        form = DiagnosticoForm(request.POST)  # Inicializa el formulario con los datos recibidos
+        form = DiagnosticoForm(request.POST)
         if form.is_valid():
             diagnostico_text = form.cleaned_data['diagnostico']
             veterinario = request.user
             
-            # Crea una instancia de Diagnostico y guárdala en la base de datos
             diagnostico = Diagnostico(agendamiento=agendamiento, diagnostico=diagnostico_text, veterinario=veterinario)
             diagnostico.save()
             
-            # Agrega un mensaje de éxito
             messages.success(request, 'El diagnóstico se guardó correctamente.')
             
-            # Redirige al usuario a la página de detalles del agendamiento o a donde desees
             return redirect('/citas-colaborador/')
             
     else:
-        form = DiagnosticoForm()  # Crea una instancia vacía del formulario
+        form = DiagnosticoForm()
 
+    is_veterinario = request.user.groups.filter(name='Veterinarios').exists()
     context = {
         'agendamiento': agendamiento,
-        'form': form,  # Agrega el formulario al contexto
+        'form': form,
+        'is_veterinario': is_veterinario
     }
     return render(request, 'app/colaboradores/diagnostico.html', context)
+
 
 
 

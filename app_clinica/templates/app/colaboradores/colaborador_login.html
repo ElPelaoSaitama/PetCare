@@ -68,40 +68,37 @@
     </style>
     
     <div class="card-wrapper">
-        <div class="card">
-            <div class="card-body">
-                <form method="POST" action="{% url 'app_clinica:colaborador_login' %}" class="php-email-form">
-                    {% csrf_token %}
-                    <div class="text-center">
-                        <h2>Acceso colaborador</h2>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label for="nombre">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" placeholder="" required>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label for="contraseña">Contraseña</label>
-                        <input type="password" name="password" class="form-control" placeholder="" required>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Aceptar</button>
-                    </div>
-                </form>
+      <div class="card">
+          <div class="card-body">
+              <form method="POST" action="{% url 'app_clinica:colaborador_login' %}" class="php-email-form">
+                  {% csrf_token %}
+                  <div class="text-center">
+                      <h2>Acceso colaborador</h2>
+                  </div>
+                  <div class="form-group col-md-12">
+                      <label for="nombre">Nombre de usuario</label>
+                      <input type="text" name="username" class="form-control" placeholder="" required>
+                  </div>
+                  <div class="form-group col-md-12">
+                      <label for="contraseña">Contraseña</label>
+                      <input type="password" name="password" class="form-control" placeholder="" required>
+                  </div>
+                  <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Aceptar</button>
+                  </div>
+              </form>
+          </div>
+          <div class="card-footer">
+            <div class="text-center">
+              <p><a href="#" onclick="history.back()">Volver al atrás</a> | <a href="{% url 'app_clinica:home' %}">Volver al inicio</a></p>
             </div>
-        </div>
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-
+          </div>
+      </div>
+  </div>
     {% endblock %}
 
-
+  
+  
   </main>
   <!-- ======= Footer ======= -->
   <footer id="footer">
@@ -148,4 +145,18 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
+
+{% if messages %}
+        {% for message in messages %}
+        <script>
+            Swal.fire({
+                title: 'Error',
+                text: "{{ message }}",
+                icon: 'error'
+            });
+          </script>
+        {% endfor %}
+{% endif %}
+
+
   </html>

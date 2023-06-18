@@ -1,0 +1,28 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Editar Agendamiento</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+<form method="post" action="{% url 'app_clinica:editar_agendamiento_colaborador' agendamiento.id %}" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+
+
+
+{% endblock dinamico %}
+
+{% block js %}
+    
+{% endblock %}
+    

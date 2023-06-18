@@ -1,0 +1,93 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Buscar Clientes</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+<h1 class="text-center mt-3 mb-3">Búsqueda de clientes</h1>
+
+<form method="GET" class="form-inline">
+    <div class="form-group mr-2">
+        <input type="text" name="q" class="form-control" id="search-input" placeholder="Buscar cliente">
+    </div>
+</form>
+<br>
+<hr class="border-bottom">
+<h2 class="text-center">Listado de clientes</h2>
+<ul class="list-group mt-3" id="search-results">
+    <li class="list-group-item list-group-item-dark search-header">
+        <div class="row">
+            <div class="col-6">Nombre Cliente</div>
+            <div class="col-6">Teléfono</div>
+        </div>
+    </li>
+    {% for cliente in clientes %}
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-6">
+                    <a href="{% url 'app_clinica:editar_cliente' cliente.id %}">{{ cliente.user.first_name|title }} {{ cliente.user.last_name|title }}</a>
+                </div>
+                <div class="col-6 text-right">{{ cliente.cellNumber }}</div>
+            </div>
+        </li>
+    {% empty %}
+        {% if request.GET.q %}
+            <li class="list-group-item" id="no-results-message">No se encontraron clientes que coincidan con la búsqueda.</li>
+        {% else %}
+            <li class="list-group-item" id="no-results-message">No se encontraron clientes.</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+
+
+<script>
+    // Obtener el campo de búsqueda y los resultados de búsqueda
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const noResultsMessage = document.getElementById('no-results-message');
+
+    // Función para realizar la búsqueda en tiempo real
+    const searchClients = () => {
+        const query = searchInput.value.toLowerCase();
+        const results = Array.from(searchResults.children);
+
+        let hasResults = false;
+
+        results.forEach(result => {
+            if (!result.classList.contains('search-header')) {
+                const text = result.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    result.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    result.style.display = 'none';
+                }
+            }
+        });
+
+        if (noResultsMessage) {
+            noResultsMessage.style.display = hasResults ? 'none' : 'block';
+        }
+    };
+
+    // Agregar el evento de cambio al campo de búsqueda
+    searchInput.addEventListener('input', searchClients);
+</script>
+
+{% endblock %}
+
+
+
+
+
+{% block js %}
+    
+{% endblock %}
+    

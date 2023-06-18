@@ -1,0 +1,36 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Editar Clientes</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+
+<div class="text-center">
+    <h1>Editar Cliente</h1>
+</div>
+
+<form method="POST" action="" class="mt-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="javascript:window.history.back()" class="btn btn-secondary">Volver</a>
+    </div>
+</form>
+
+{% endblock %}
+
+
+
+
+
+{% block js %}
+    
+{% endblock %}
+    

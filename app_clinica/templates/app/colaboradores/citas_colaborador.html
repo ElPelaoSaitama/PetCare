@@ -56,7 +56,8 @@
                 <th>Hora</th>
                 <th>Categoría</th>
                 <th>Nombre Mascota</th>
-                <th>Acciones</th>
+                <th>Diagnostico</th>
+                <th>Descargar Ficha</th>
             </tr>
         </thead>
         <tbody>
@@ -72,13 +73,14 @@
                         <button class="check-button" data-toggle="tooltip" title="Diagnóstico ya escrito"><i class="fas fa-check"></i></button>
                         {% else %}
                             <a href="{% url 'app_clinica:diagnostico' consulta_id=agendamiento.id %}"><button><i class="fas fa-edit"></i></button></a>
-                        {% endif %}
+                        {% endif %}  
+                    </td>
+                    <td class="actions">
                         <a href="{% url 'app_clinica:generar_pdf' mascota_id=agendamiento.mascota.id %}" target="_blank">
                             <button class="diagnostico-button" data-agendamiento-id="{{ agendamiento.id }}" data-toggle="tooltip" title="Descargar Ficha">
                                 <i class="far fa-file-pdf"></i>
                             </button>
                         </a>
-                        
                     </td>
                 </tr>
             {% endfor %}

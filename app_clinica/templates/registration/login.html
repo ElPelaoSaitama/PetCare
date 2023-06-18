@@ -31,15 +31,12 @@
     <!-- Template Main CSS File -->
     <link href="{% static 'app/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'app/css/login.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
   
-    <!-- =======================================================
-    * Template Name: Arsha
-    * Updated: Mar 10 2023 with Bootstrap v5.2.3
-    * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-    * Author: BootstrapMade.com
-    * License: https://bootstrapmade.com/license/
-    ======================================================== -->
   </head>
+  
 <body>
     {% load crispy_forms_tags %}
     <div id="contenido">
@@ -47,51 +44,60 @@
           <main id="main">
             <!-- ======= Inicio de sesion ======= -->
             <section id="about" class="about">
-              <div class="container" data-aos="fade-up">
-                <div class="card">
-                    <div class="card-header section-title">
-                        <h2>Ingreso a PetCare</h2>
-                    </div>
-                    <br>
-                    <div class="card-body">
+              
+              <div class="card" id="login-card">
+                <div class="card-header">
+                  <h1 class="text-center">Ingreso al Sistema</h1>
+                </div>
+                <div class="card-body">
+                  <form action="" method="post" id="login-form">
+                    {% csrf_token %}
 
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <div class="form-grup">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text icon-size"><i class="fas fa-user"></i></span>
-                                    </div>
-                                    <input type="email" class="form-control" id="username" name="username" placeholder="Ingresa tu email" required>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="form-group mb-3">
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text icon-size"><i class="fas fa-lock"></i></span>
-                                  </div>
-                                  <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
-                                </div>
-                              </div>
-                              <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Ingresar</button>
-                              </div>
-                        </form>
+                    <div class="form-group">
+                      <label for="username">Email:</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa tu email" required>
+                      </div>
 
                     </div>
-                    <div class="card-footer">
-                        <p>¿No tienes una cuenta? <a href="{% url 'app_clinica:registro' %}">Regístrate aquí</a></p>
-                        <p ><a href="#" onclick="history.back()">Volver al atras</a></p>
-                        <p>¿Eres colaborador? <a href="{% url 'app_clinica:colaborador_login' %}">Inicio colaborador</a></p>
-                        <!-- <button type="button" onclick="history.back()" class="btn-back">Volver</button> -->
-
+                    <div class="form-group">
+                      <label for="password">Contraseña:</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
                       </div>
                     </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Ingresar</button>
+                    </div>
+                  </form>
                 </div>
-            </div>
-            </section>
-    
+                <div class="card-footer">
+                  <div class="row">
+                    
+                    <div class="col-6">
+                      <p>¿No tienes una cuenta? <a href="{% url 'app_clinica:registro' %}">Regístrate aquí</a></p>
+                    </div>
+
+                    <div class="col-6 text-right">
+                      <p>¿Eres colaborador? <a href="{% url 'app_clinica:colaborador_login' %}">Inicio colaborador</a></p>
+                    </div>
+
+                  </div>
+                  <div class="text-center">
+                    <p><a href="#" onclick="history.back()">Volver al atrás</a> | <a href="{% url 'app_clinica:home' %}">Volver al inicio</a></p>
+                  </div>
+                </div>
+              </div>
+
+    </section>
+            
             <!-- ======= Cta Section ======= -->
             <section id="cta" class="cta">
             </section><!-- End Cta Section -->
@@ -123,14 +129,16 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   {% if messages %}
-  {% for m in messages %}
-    <script>
+  <script>
+    {% for message in messages %}
       Swal.fire({
-        "title": "Felictaciones",
-        "text": "{{m}}",
-        "icon": "success"
-      })
-    </script>
-  {% endfor %}
-  {% endif %}
+        icon: 'error',
+        title: 'Error',
+        text: '{{ message }}'
+      });
+    {% endfor %}
+  </script>
+{% endif %}
+
+
 </html>

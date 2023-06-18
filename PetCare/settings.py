@@ -82,7 +82,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'builtins': ['crispy_forms.templatetags.crispy_forms_tags'], # Agrega esta línea
+            'builtins': ['crispy_forms.templatetags.crispy_forms_tags'],
         },
     },
 ]

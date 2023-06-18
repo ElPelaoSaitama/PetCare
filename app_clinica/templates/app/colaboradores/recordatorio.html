@@ -1,0 +1,60 @@
+{% extends 'app/colaboradores/dashboard_colaborador.html' %}
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block titulo %}
+<title>PetCare - Recordatorio</title>
+{% endblock titulo %}
+
+{% block dinamico %}
+
+<center><h2>Agendamientos Activos</h2></center>
+<hr><br>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Agendamiento</th>
+            <th>Hora</th>
+            <th>Nombre Cliente</th>
+            <th>Número de Teléfono</th>
+            <th>Nombre Mascota</th>
+            <th>Médico</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agendamiento in agendamientos %}
+        <tr>
+            <td>{{ agendamiento.agenda.dia }}</td>
+            <td>{{ agendamiento.agenda.get_horario_display }}</td>
+            <td>{{ agendamiento.mascota.dueno.user.get_full_name|title }}</td>
+            <td>{{ agendamiento.mascota.dueno.cellNumber|join:'' }}</td>
+            <td>{{ agendamiento.mascota.nombre|title }}</td>
+            <td>{{ agendamiento.agenda.veterinario.user.get_full_name|title }}</td>
+            <td>
+                <a href="{% url 'app_clinica:enviar_correo' agendamiento.id %}" data-toggle="tooltip" title="{{ agendamiento.mascota.dueno.user.email }}">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+                <a href="{% url 'app_clinica:editar_agendamiento_colaborador' agendamiento.id %}"><i class="fa-solid fa-edit"></i></a>
+
+                <a href="#">
+                    <i class="fas fa-trash"></i>
+                </a>
+
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock dinamico %}
+
+{% block js %}
+    
+{% endblock %}
+    

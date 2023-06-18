@@ -238,6 +238,87 @@ class DiagnosticoForm(forms.ModelForm):
         model = Diagnostico
         fields = ['diagnostico']
 
+class EditAgendamientoColaborador(forms.ModelForm):
+    class Meta:
+        model = Agendamiento
+        fields = ['mascota', 'categoria', 'agenda', 'mensaje']
+        widgets = {
+            'mascota': forms.Select(attrs={'class': 'form-control'}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
+            'agenda': forms.Select(attrs={'class': 'form-control'}),
+            'mensaje': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+        if self.request and self.request.user.is_authenticated:
+            cliente = self.instance.cliente if self.instance.pk else None
+
+            if cliente:
+                mascotas_cliente = cliente.mascota_set.all()
+                self.fields['mascota'].queryset = mascotas_cliente
+
+        if self.is_valid():
+            categoria_id = self.instance.categoria_id if self.instance.pk else None
+
+            if categoria_id:
+                agendas_disponibles = Agenda.objects.filter(
+                    Q(categoria=categoria_id) &
+                    Q(dia__gte=timezone.now().date()) &
+                    Q(agendamiento__isnull=True) &
+                    Q(dia__gt=timezone.now())  # Agendamientos con fecha mayor a la fecha actual
+                )
+                self.fields['agenda'].queryset = agendas_disponibles
+
+        if self.instance.pk:
+            self.fields['agenda'].initial = self.instance.agenda
+
+
+from django import forms
+from .models import Cliente
+
+class EditarClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['fecha_nac', 'genero', 'cellNumber', 'direccion', 'rut']
+        widgets = {
+            'fecha_nac': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'genero': forms.Select(attrs={'class': 'form-control'}),
+            'cellNumber': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'rut': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'fecha_nac': 'Fecha de Nacimiento',
+            'genero': 'Género',
+            'cellNumber': 'Teléfono',
+            'direccion': 'Dirección',
+            'rut': 'RUT',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.fecha_nac:
+            self.initial['fecha_nac'] = instance.fecha_nac.strftime('%Y-%m-%d')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
