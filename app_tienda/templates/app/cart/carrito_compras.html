@@ -1,0 +1,68 @@
+{% extends 'app/baseTienda.html'  %}
+{% load static %}
+
+{% block contenido %}
+
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <ol>
+          <li><a href="#" onclick="history.back()">Volver atras</a></li>
+          <li>Carrito</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="container text-center shadow">
+        <br>
+        <h1>Carrito de Compras</h1>
+        
+        {% if productos_carrito %}
+          <div class="card shadow-sm">
+            <table class="table">
+              <thead>
+                <tr class="bg-light">
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in productos_carrito %}
+                  <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td>
+                      <button class="btn btn-secondary btn-sm" onclick="restarCantidad({{ item.producto.id }})">-</button>
+                      <span id="cantidad-{{ item.producto.id }}">{{ item.cantidad }}</span>
+                      <button class="btn btn-secondary btn-sm" onclick="sumarCantidad({{ item.producto.id }})">+</button>
+                    </td>
+                    <td id="precio-{{ item.producto.id }}">$ {{ item.producto.precio }}</td>
+                    <td id="subtotal-{{ item.producto.id }}">$ {{ item.subtotal }}</td>
+                  </tr>
+                {% endfor %}
+                <tr class="bg-light">
+                  <td colspan="3" class="text-right">Total:</td>
+                  <td class="fw-bold" id="total">$ {{ total }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center mt-3">
+            <a href="{% url 'app_tienda:vaciar_carrito' %}" onclick="vaciarCarrito(event)" class="btn btn-danger">Vaciar Carrito</a>
+            <a href="#" class="btn btn-primary">Ir a Pagar</a>
+          </div>
+        {% else %}
+          <p>No hay productos en el carrito.</p>
+        {% endif %}
+        <br>
+      </div>
+      
+      
+    
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static 'app/js/carrito.js' %}"></script>
+
+{% endblock %}

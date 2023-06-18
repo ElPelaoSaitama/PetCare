@@ -65,6 +65,13 @@
           </li>
           {% if user.is_authenticated %}
 
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'app_tienda:ver_carrito' %}">
+              <i class="fas fa-shopping-cart"></i> Carrito
+            </a>
+          </li>
+          
+
           <li><a class="nav-link scrollto" href="{% url 'logout' %}">Cerrar sesión</a></li>
           <li><a class="getstarted scrollto" href="#"></i>{{ user.first_name.title }}<i class="fa-solid fa-circle fa-beat fa-2xs" style="color: #1cce31;"></i></a></li>
 

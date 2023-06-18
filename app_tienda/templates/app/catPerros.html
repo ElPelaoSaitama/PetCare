@@ -13,7 +13,7 @@
       </div>
     </section>
 
-    <div class="section-title">
+      <div class="section-title">
         <h2>Productos</h2>
       </div>
 
@@ -29,7 +29,10 @@
                     <div class="card-body">
                        <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio |intcomma }}</span> </div>
                        <h5 class="card-title">{{ p.nombre | title }}</h5>
+                       <p>Producto ID: {{ p.id }}</p>
+
                        <div class="text-center my-4"> <a href="#" class="btn btn-success">Comprar</a> </div>
+                       <a href="{% url 'app_tienda:agregar_al_carrito' p.id %}">Agregar al carrito</a>
                     </div>
                  </div>
               </div>
