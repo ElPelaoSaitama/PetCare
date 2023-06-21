@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .models import Producto
+from .models import Producto, Orden, Orden_detail, Categoria
 from .forms import ProductoForm
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required , permission_required
+import json, random, requests
 
 #Pagina de categorias de la tienda
 def categorias(request):
@@ -17,7 +18,6 @@ def catPerros(request):
         'productos': productos,
     }
     return render(request, 'app/catPerros.html', data)
-
 
 def catGatos(request):
     productos = Producto.objects.filter(categoria_id=2)
@@ -102,11 +102,12 @@ def eliminar_producto(request, id):
 def tienda(request):
     return render (request, 'app/producto/tienda.html')
 
-from django.shortcuts import render
-
+@login_required
 def ver_carrito(request):
     # Obtener el carrito de compras desde la sesión del usuario
+    request.session["paypal"] = True
     carrito = request.session.get('carrito', {})
+    print(carrito)
     productos_carrito = []
     total = 0
 
@@ -142,11 +143,7 @@ def ver_carrito(request):
 
     return render(request, 'app/cart/carrito_compras.html', data)
 
-
-from django.shortcuts import redirect, get_object_or_404
-from django.contrib import messages
-from .models import Producto
-
+@login_required
 def agregar_al_carrito(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
 
@@ -154,9 +151,9 @@ def agregar_al_carrito(request, producto_id):
     carrito = request.session.get('carrito', {})
 
     # Verificar si el producto ya está en el carrito
-    if producto_id in carrito:
+    if str(producto_id) in carrito:
         # Incrementar la cantidad del producto en el carrito
-        carrito[producto_id]['cantidad'] += 1
+        carrito[str(producto_id)]['cantidad'] += 1
     else:
         # Convertir el producto a un diccionario
         producto_dict = {
@@ -167,7 +164,7 @@ def agregar_al_carrito(request, producto_id):
         }
 
         # Agregar el producto al carrito con cantidad 1
-        carrito[producto_id] = {
+        carrito[str(producto_id)] = {
             'producto': producto_dict,
             'cantidad': 1
         }
@@ -182,8 +179,66 @@ def agregar_al_carrito(request, producto_id):
     return redirect('app_tienda:ver_carrito')
 
 
-
 from django.http import JsonResponse
+
+def actualizar_carrito(request, producto_id, cantidad):
+    # Obtener el carrito de compras desde la sesión del usuario
+    carrito = request.session.get('carrito', {})
+
+    # Verificar si el producto ya está en el carrito
+    if producto_id in carrito:
+        # Actualizar la cantidad del producto en el carrito
+        carrito[producto_id]['cantidad'] = cantidad
+
+    # Actualizar el carrito en la sesión del usuario
+    request.session['carrito'] = carrito
+
+    # Devolver una respuesta JSON exitosa
+    return JsonResponse({'message': 'Carrito actualizado exitosamente.'})
+
+
+from django.http import HttpResponseBadRequest
+
+def actualizar_cantidad_carrito(request, producto_id, cantidad):
+    # Verificar si el producto existe en el carrito de la sesión
+    carrito = request.session.get('carrito', {})
+    if producto_id in carrito:
+        carrito[producto_id]['cantidad'] = cantidad
+        request.session['carrito'] = carrito
+        return HttpResponse()
+    else:
+        return HttpResponseBadRequest('El producto no existe en el carrito de la sesión.')
+
+
+
+
+def simple_checkout(request):
+    return render(request, 'app/cart/simple_checkout.html')
+
+def paymentComplete(request):
+    body = json.loads(request.body)
+    sess = request.session.get("data",{"items":[]})
+    productos_carro = sess["items"]
+    #todos los datos de cabecera
+    Oc = Orden()
+    Oc.customer=body['customer']
+    Oc.ordernum=random.randint(10000,99999)
+    Oc.save()
+    for item in productos_carro:
+        prod=Producto.objects.get(id.item)
+        Od=Orden_detail()
+        Od.producto=prod
+        Od.cant=1
+        Od.orden=Oc
+        Od.save()
+    del request.session['carrito']
+    return request('app_tienda:success')
+
+def success(request):
+    context = {
+        "mensaje": "La compra ha sido exitosa"  # Agrega un mensaje de éxito al contexto
+    }
+    return render(request, 'app/cart/success.html', context)
 
 def vaciar_carrito(request):
     # Eliminar el contenido de la sesión del carrito

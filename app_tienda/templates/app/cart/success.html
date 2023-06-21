@@ -1,0 +1,27 @@
+{% extends 'app/baseTienda.html'  %}
+{% load static %}
+
+{% block contenido %}
+    <!-- Código HTML de tu página -->
+
+    <script>
+        // Mostrar SweetAlert con mensaje de éxito al cargar la página
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Compra exitosa!',
+                text: '{{ mensaje }}',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redireccionar a la página "categorias"
+                    window.location.href = "{% url 'app_tienda:categorias' %}";
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

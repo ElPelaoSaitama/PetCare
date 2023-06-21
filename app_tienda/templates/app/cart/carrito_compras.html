@@ -3,66 +3,163 @@
 
 {% block contenido %}
 
-    <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
-        <ol>
-          <li><a href="#" onclick="history.back()">Volver atras</a></li>
-          <li>Carrito</li>
-        </ol>
-      </div>
-    </section>
+<section id="breadcrumbs" class="breadcrumbs">
+  <div class="container">
+    <ol>
+      <li><a href="#" onclick="history.back()">Volver atrás</a></li>
+      <li>Carrito</li>
+    </ol>
+  </div>
+</section>
 
-    <div class="container text-center shadow">
-        <br>
-        <h1>Carrito de Compras</h1>
+<div class="container text-center shadow">
+  <br>
+  <h1>Carrito de Compras</h1>
+  
+  {% if productos_carrito %}
+  <div class="card shadow-sm">
+    <table class="table">
+      <thead>
+        <tr class="bg-light">
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in productos_carrito %}
+        <tr>
+          <td>{{ item.producto.nombre }}</td>
+
+          <td>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-secondary btn-decrementar" data-producto-id="{{ item.producto.id }}">-</button>
+              <span id="cantidad-{{ item.producto.id }}" class="my-2">{{ item.cantidad }}</span>
+              <button type="button" class="btn btn-secondary btn-incrementar" data-producto-id="{{ item.producto.id }}">+</button>
+            </div>
+          </td>
+          
         
-        {% if productos_carrito %}
-          <div class="card shadow-sm">
-            <table class="table">
-              <thead>
-                <tr class="bg-light">
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio Unitario</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in productos_carrito %}
-                  <tr>
-                    <td>{{ item.producto.nombre }}</td>
-                    <td>
-                      <button class="btn btn-secondary btn-sm" onclick="restarCantidad({{ item.producto.id }})">-</button>
-                      <span id="cantidad-{{ item.producto.id }}">{{ item.cantidad }}</span>
-                      <button class="btn btn-secondary btn-sm" onclick="sumarCantidad({{ item.producto.id }})">+</button>
-                    </td>
-                    <td id="precio-{{ item.producto.id }}">$ {{ item.producto.precio }}</td>
-                    <td id="subtotal-{{ item.producto.id }}">$ {{ item.subtotal }}</td>
-                  </tr>
-                {% endfor %}
-                <tr class="bg-light">
-                  <td colspan="3" class="text-right">Total:</td>
-                  <td class="fw-bold" id="total">$ {{ total }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="text-center mt-3">
-            <a href="{% url 'app_tienda:vaciar_carrito' %}" onclick="vaciarCarrito(event)" class="btn btn-danger">Vaciar Carrito</a>
-            <a href="#" class="btn btn-primary">Ir a Pagar</a>
-          </div>
-        {% else %}
-          <p>No hay productos en el carrito.</p>
-        {% endif %}
-        <br>
-      </div>
-      
-      
+          <td id="precio-{{ item.producto.id }}">$ {{ item.producto.precio }}</td>
+          <td id="subtotal-{{ item.producto.id }}">$ {{ item.subtotal }}</td>
+        </tr>
+        
+        {% endfor %}
+        <tr class="bg-light">
+          <td colspan="3" class="text-right">Total:</td>
+          <td class="fw-bold" id="total">$ {{ total }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="text-center mt-3">
+    <!-- Botón de Pago de PayPal -->
+    <div class="d-flex justify-content-center align-items-center mt-3">
+      <div id="paypal-button-container"></div>
+    </div>
+  
+    <a href="{% url 'app_tienda:vaciar_carrito' %}" onclick="vaciarCarrito(event)" class="btn btn-danger">Vaciar Carrito</a>
+  </div>
+  
+  {% else %}
+    <p>No hay productos en el carrito.</p>
+  {% endif %}
+  <br>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AWidJL6k-sWygfyfvyuSsFcSSpmfjDifaEDlCBlVW4Ezhk1QqRSanZ6ApNV86F9duZwIx4PNVVB1p7ES&currency=USD&disable-funding=credit,card"></script>
+
+    
+<script>
+// Configurar el botón de PayPal
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: '{{ total }}', // Inserta aquí el valor total del carrito desde tu contexto
+          currency_code: 'USD'
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      vaciarCarrito();
+      // Mostrar mensaje de pago exitoso utilizando SweetAlert
+      Swal.fire({
+        icon: 'success',
+        title: '¡Pago exitoso!',
+        text: 'La transacción se ha completado correctamente.',
+        confirmButtonText: 'Aceptar',
+        showCancelButton: false,
+        allowOutsideClick: false
+      }).then(function() {
+        
+        redirectToCategorias();
+        
+      });
+    });
+  },
+ /* onError: function(err) {
+    // Mostrar mensaje de error utilizando SweetAlert
+    Swal.fire({
+      icon: 'error',
+      title: '¡Error en la transacción!',
+      text: 'La transacción no se pudo completar.',
+      confirmButtonText: 'Aceptar',
+      showCancelButton: false,
+      allowOutsideClick: false
+    });
+  }*/
+}).render('#paypal-button-container');
+
+function vaciarCarrito() {
+  // Realiza la petición AJAX al servidor para vaciar el carrito
+  // Puedes utilizar la función fetch() para hacer la petición al servidor y enviar los datos
+
+  fetch('{% url 'app_tienda:vaciar_carrito' %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+  })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      // Aquí puedes manejar la respuesta del servidor si es necesario
+      console.log(data);
+    })
+    .catch(function(error) {
+      console.error('Error:', error);
+    });
+}
+
+function redirectToCategorias() {
+  window.location.href = '/petstore/carrito/'; // Redirigir a la página de categorías
+}
+
+function getCookie(name) {
+  var cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return cookieValue ? cookieValue.pop() : '';
+}
+
+</script>
+
+
+
+
     
 {% endblock %}
 
 {% block js %}
 
 <script src="{% static 'app/js/carrito.js' %}"></script>
+
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
 
 {% endblock %}

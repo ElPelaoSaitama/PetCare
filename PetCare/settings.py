@@ -179,7 +179,6 @@ EMAIL_HOST_PASSWORD = 'tsbnnvdijldznurx'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
-
 #if DEBUG:
     # Configuración del servidor de desarrollo
     # Cambiar el puerto a 80

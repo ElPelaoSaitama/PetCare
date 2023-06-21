@@ -34,4 +34,22 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class Orden(models.Model):
+    ordernum = models.CharField(max_length=9, null=True, blank=True)
+    customer = models.CharField(max_length=200, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.ordernum
+
+class Orden_detail(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cant = models.IntegerField(default=1)
+    orden = models.ForeignKey(Orden, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.producto
     
