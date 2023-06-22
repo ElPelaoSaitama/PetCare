@@ -65,12 +65,6 @@ def custom_login(request):
     # Renderiza la página de inicio de sesión con los mensajes
     return render(request, 'registration/login.html')
 
-
-
-
-
-
-
 def home(request):
     data = {
         'form': ContactoForm(),
@@ -386,6 +380,26 @@ def editarPassword(request):
 
     context = {'form': form}
     return render(request, 'app/change_password.html', context)
+
+from app_tienda.models import Orden
+
+@login_required
+def compras_cliente(request):
+    user = request.user
+    ordenes = Orden.objects.filter(customer=user)
+
+    data = {
+        'ordenes': ordenes
+    }
+
+    return render(request, 'app/compras_cliente.html', data)
+
+
+
+
+
+
+
 
 
 # Seccion solo para colaboradores

@@ -110,7 +110,7 @@ def ver_carrito(request):
     # Obtener el carrito de compras desde la sesión del usuario
     request.session["paypal"] = True
     carrito = request.session.get('carrito', {})
-    #print(carrito)
+    print(carrito)
     productos_carrito = []
     total = 0
 
@@ -143,6 +143,7 @@ def ver_carrito(request):
         'productos_carrito': productos_carrito,
         'total': total
     }
+    print(total)
 
     return render(request, 'app/cart/carrito_compras.html', data)
 
@@ -280,7 +281,7 @@ def almacenar_compra_exitosa(request):
         # Crear una nueva instancia de Orden
         orden = Orden()
         orden.ordernum = generar_numero_orden()
-        orden.customer = f'{nombre} {apellido}'
+        orden.customer = request.user
         orden.status = True
         orden.save()
 
@@ -318,7 +319,7 @@ def almacenar_compra_exitosa(request):
 
 
 
-    
+
 
 def imprimir_carrito(request):
     carrito = request.session.get('carrito', {})

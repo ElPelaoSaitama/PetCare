@@ -86,7 +86,7 @@
     },
     onApprove: function(data, actions) {
       return actions.order.capture().then(function(details) {
-        //vaciarCarrito();
+        vaciarCarrito();
         // Mostrar mensaje de pago exitoso utilizando SweetAlert
         Swal.fire({
           icon: 'success',
@@ -101,7 +101,7 @@
         });
       });
     },
-    onError: function(err) {
+    /*onError: function(err) {
       // Mostrar mensaje de error utilizando SweetAlert
       Swal.fire({
         icon: 'error',
@@ -111,7 +111,7 @@
         showCancelButton: false,
         allowOutsideClick: false
       });
-    }
+    }*/
   }).render('#paypal-button-container');
   
   function vaciarCarrito() {

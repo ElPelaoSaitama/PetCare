@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 #Tabla de categorias (Perros, Gatos, Animales Exoticos, ETC)
 class Categoria(models.Model):
@@ -38,7 +39,7 @@ class Producto(models.Model):
 
 class Orden(models.Model):
     ordernum = models.CharField(max_length=9, null=True, blank=True)
-    customer = models.CharField(max_length=200, null=True, blank=True)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
 
