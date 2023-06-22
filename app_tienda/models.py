@@ -51,5 +51,5 @@ class Orden_detail(models.Model):
     orden = models.ForeignKey(Orden, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.producto
+         return f"{self.producto.nombre} - Cantidad: {self.cant} - Orden {self.orden}"
     

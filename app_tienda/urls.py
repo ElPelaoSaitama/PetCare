@@ -22,8 +22,7 @@ urlpatterns = [
     path('success/', views.success, name='success'),
     path('complete/', views.paymentComplete, name='complete'),
 
-    path('actualizar_carrito/<int:producto_id>/<int:cantidad>/', views.actualizar_carrito, name='actualizar_carrito'),
+    path('compra-exitosa/', views.almacenar_compra_exitosa, name='compra_exitosa'),
 
-    path('actualizar_cantidad_carrito/<int:producto_id>/<int:cantidad>/', views.actualizar_cantidad_carrito, name='actualizar_cantidad_carrito'),
 
 ]
