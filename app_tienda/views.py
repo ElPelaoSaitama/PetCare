@@ -341,7 +341,13 @@ def generar_boleta(request, orden_id):
         cantidad = detalle.cant
         precio_unitario = detalle.producto.precio
         subtotal = detalle.producto.precio * detalle.cant
-        data.append([producto, cantidad, "$" + str(precio_unitario), "$" + str(subtotal)])
+        
+        # Ajustar el ancho máximo del nombre del producto
+        producto_style = ParagraphStyle('producto_style', parent=content_style)
+        producto_style.wordWrap = 'LTR'  # Ajuste de línea automático de izquierda a derecha
+        producto_paragraph = Paragraph(producto, producto_style)
+        
+        data.append([producto_paragraph, cantidad, "$" + str(precio_unitario), "$" + str(subtotal)])
 
     table_style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), '#CCCCCC'),
