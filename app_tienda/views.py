@@ -10,6 +10,15 @@ from django.contrib.auth.decorators import login_required , permission_required
 import json, random, requests
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+import random
+import string
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from django.conf import settings
+from django.contrib.sessions.backends.db import SessionStore
+
 
 #Pagina de categorias de la tienda
 def categorias(request):
@@ -217,54 +226,11 @@ def vaciar_carrito(request):
     # Redireccionar a la página de carrito vacío o a donde corresponda
     return redirect('app_tienda:ver_carrito')
 
-
-import random
-import string
-
 def generar_numero_orden():
     # Generar un número de orden único, por ejemplo, combinando letras y números al azar
     caracteres = string.ascii_letters + string.digits
     numero_orden = ''.join(random.choices(caracteres, k=9))
     return numero_orden
-
-def obtener_informacion_cliente(user):
-    # Obtener el objeto de cliente asociado al usuario
-    cliente = Cliente.objects.get(user=user)
-
-    # Obtener los detalles del cliente
-    nombre = user.first_name
-    apellido = user.last_name
-    fecha_nacimiento = cliente.fecha_nac
-    genero = cliente.genero
-    numero_telefono = cliente.cellNumber
-    direccion = cliente.direccion
-    rut = cliente.rut
-
-    # Realizar las operaciones necesarias con los detalles del cliente
-
-    return nombre, apellido, fecha_nacimiento, genero, numero_telefono, direccion, rut
-
-import json
-from django.shortcuts import redirect
-from django.http import JsonResponse
-from .models import Orden, Orden_detail
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-
-def get_user_info(user):
-    """
-    Obtiene la información del usuario.
-    """
-    nombre = user.first_name
-    apellido = user.last_name
-    return nombre, apellido
-
-from django.shortcuts import redirect
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-import json
-from django.core.exceptions import ObjectDoesNotExist
-
 
 @login_required
 def almacenar_compra_exitosa(request):
@@ -275,15 +241,22 @@ def almacenar_compra_exitosa(request):
         if user.first_name:
             nombre = user.first_name.capitalize()
             apellido = user.last_name.capitalize()
+            email = user.email
         else:
             nombre = ""
 
+        
+        
         # Crear una nueva instancia de Orden
         orden = Orden()
         orden.ordernum = generar_numero_orden()
         orden.customer = request.user
         orden.status = True
         orden.save()
+        print(email)
+        print("ID de orden")
+        print(orden.id)
+
 
         # Obtener los productos del carrito
         data = json.loads(request.body)
@@ -309,11 +282,143 @@ def almacenar_compra_exitosa(request):
             orden_detail.cant = cantidad
             orden_detail.orden = orden
             orden_detail.save()
+            print("Orden Details Guardado")
             print(orden_detail)
 
         return JsonResponse({'success': True, 'message': 'Compra exitosa'})
 
     return redirect('app_tienda:ver_carrito')
+    
+def generar_boleta(request, orden_id):
+    try:
+        orden = Orden.objects.get(id=orden_id)
+    except Orden.DoesNotExist:
+        return HttpResponse('La orden no existe.')
+
+    detalles_orden = Orden_detail.objects.filter(orden=orden)
+    total = sum(detalle.producto.precio * detalle.cant for detalle in detalles_orden)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="boleta.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72)
+    elements = []
+
+    # Estilos de la boleta
+    styles = getSampleStyleSheet()
+    title_style = styles['Heading1']
+    subtitle_style = styles['Heading2']
+    content_style = styles['BodyText']
+    footer_style = ParagraphStyle('footer_style', parent=content_style)
+    footer_style.alignment = 2  # Alineación a la derecha
+
+    # Imagen de cabecera
+    image_path = 'app_clinica/static/app/img/LogoPetCare.png'  # Reemplaza con la ruta correcta de la imagen
+    image = Image(image_path, width=250, height=180)  # Ajusta el ancho y alto de la imagen según tus necesidades
+    elements.append(image)
+
+    # Encabezado de la boleta
+    elements.append(Paragraph("Boleta de Compra", title_style))
+    elements.append(Paragraph("Número de Orden: " + str(orden.ordernum), content_style))
+    elements.append(Spacer(1, 20))
+
+    # Información del cliente
+    nombre_cliente = orden.customer.first_name.capitalize()
+    apellido_cliente = orden.customer.last_name.capitalize()
+    email = orden.customer.email
+    print(email)
+    nombre_completo = nombre_cliente + " " + apellido_cliente
+    
+    elements.append(Paragraph("Información del Cliente:", subtitle_style))
+    elements.append(Paragraph("Nombre: " + nombre_completo, content_style))
+    elements.append(Paragraph("Correo Electrónico: " + orden.customer.email, content_style))
+    elements.append(Spacer(1, 20))
+
+    # Detalle de la compra
+    data = [["Producto", "Cantidad", "Precio Unitario", "Subtotal"]]
+    for detalle in detalles_orden:
+        producto = detalle.producto.nombre.capitalize()
+        cantidad = detalle.cant
+        precio_unitario = detalle.producto.precio
+        subtotal = detalle.producto.precio * detalle.cant
+        data.append([producto, cantidad, "$" + str(precio_unitario), "$" + str(subtotal)])
+
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), '#CCCCCC'),
+        ('TEXTCOLOR', (0, 0), (-1, 0), '#000000'),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), '#FFFFFF'),
+        ('TEXTCOLOR', (0, 1), (-1, -1), '#000000'),
+        ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 11),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, -1), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 1, '#000000')
+    ])
+
+    column_widths = [200, 70, 90, 90]  # Ajusta el ancho de las columnas según tus necesidades
+
+    table = Table(data, style=table_style, colWidths=column_widths)
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    # Total de la compra
+    total_style = ParagraphStyle('total_style', parent=content_style)
+    total_style.alignment = 2  # Alineación a la derecha
+    total_style.fontSize = 14  # Tamaño de fuente más grande
+    total_style.fontName = 'Helvetica-Bold'  # Fuente en negrita
+
+    elements.append(Paragraph("Total: $" + str(total), total_style))
+
+    doc.build(elements)
+
+    return response
+
+from django.core.mail import EmailMessage
+from django.shortcuts import redirect
+
+def enviar_boleta_por_correo(request, orden_id):
+    try:
+        orden = Orden.objects.get(id=orden_id)
+    except Orden.DoesNotExist:
+        return HttpResponse("La orden no existe.")
+
+    # Generar la boleta de compra
+    boleta_pdf = generar_boleta(request, orden_id=orden_id)  # Pasa el objeto request y el orden_id a generar_boleta
+
+    # Configurar el correo electrónico
+    email_subject = "Boleta de Compra"
+    email_from = settings.EMAIL_HOST_USER
+    email_to = orden.customer.email
+
+    # Crear el objeto de mensaje de correo electrónico
+    email = EmailMessage(
+        email_subject,
+        "Adjunto encontrarás la boleta de compra.",
+        email_from,
+        [email_to],
+    )
+    email.attach('boleta.pdf', boleta_pdf.getvalue(), 'application/pdf')
+
+    try:
+        # Enviar el correo electrónico
+        email.send()
+        return redirect(request.META.get('HTTP_REFERER', '/'))  # Redirige a la página anterior o a la raíz del sitio
+    except Exception as e:
+        return HttpResponse("Error al enviar el correo electrónico: " + str(e))
+
+
+
+
+
+
+
+
+
 
 
 

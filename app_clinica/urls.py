@@ -23,6 +23,7 @@ urlpatterns = [
     path('generar-pdf/<int:mascota_id>/', views.generar_pdf, name='generar_pdf'),
     path('compras/', views.compras_cliente, name='compras_cliente'),
     
+    
     path('eliminar-agendamiento/<int:consulta_id>/', views.eliminarAgendamiento, name='eliminar_agendamiento'),
     path('editar-agendamiento/<int:consulta_id>/', views.editarAgendamiento, name='editar_agendamiento'),
 
@@ -36,5 +37,6 @@ urlpatterns = [
     path('editar-agendamiento-colaborador/<int:agendamiento_id>/', views.editar_agendamiento, name='editar_agendamiento_colaborador'),
     path('buscar-clientes/', views.buscar_clientes, name='buscar_clientes'),
     path('editar-cliente/<int:cliente_id>/', views.editar_cliente, name='editar_cliente'),
+
 
 ]

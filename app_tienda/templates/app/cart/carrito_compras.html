@@ -53,13 +53,35 @@
       </tbody>
     </table>
   </div>
+  
   <div class="text-center mt-3">
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="envioDomicilio" value="domicilio" onclick="mostrarDireccion()">
+      <label class="form-check-label" for="envioDomicilio">Despacho a Domicilio</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="envioLocal" value="local" checked onclick="ocultarDireccion()">
+      <label class="form-check-label" for="envioLocal">Retiro en Local</label>
+    </div>
+  
+    <!-- Campo de dirección -->
+    <div id="direccionContainer" style="display: none;">
+      <label for="direccion">Dirección de Despacho:</label>
+      <input type="text" id="direccion" name="direccion" class="form-control">
+    </div>
+  
     <!-- Botón de Pago de PayPal -->
     <div class="d-flex justify-content-center align-items-center mt-3">
       <div id="paypal-button-container"></div>
     </div>
   
     <a href="{% url 'app_tienda:vaciar_carrito' %}" onclick="vaciarCarrito(event)" class="btn btn-danger">Vaciar Carrito</a>
+
+    <div class="form-group">
+      <label for="comunas">Comunas:</label>
+      <select id="comunas" class="form-control"></select>
+    </div>
+
   </div>
   
   {% else %}
@@ -67,6 +89,19 @@
   {% endif %}
   <br>
 </div>
+
+<script>
+  function mostrarDireccion() {
+    var direccionContainer = document.getElementById('direccionContainer');
+    direccionContainer.style.display = 'block';
+  }
+
+  function ocultarDireccion() {
+    var direccionContainer = document.getElementById('direccionContainer');
+    direccionContainer.style.display = 'none';
+  }
+</script>
+
 
 <script src="https://www.paypal.com/sdk/js?client-id=AWidJL6k-sWygfyfvyuSsFcSSpmfjDifaEDlCBlVW4Ezhk1QqRSanZ6ApNV86F9duZwIx4PNVVB1p7ES&currency=USD&disable-funding=credit,card"></script>
 
@@ -87,6 +122,7 @@
     onApprove: function(data, actions) {
       return actions.order.capture().then(function(details) {
         vaciarCarrito();
+        almacenarCompraExitosa(details.id, details.payer.name.given_name, '{{ total }}');
         // Mostrar mensaje de pago exitoso utilizando SweetAlert
         Swal.fire({
           icon: 'success',
@@ -96,8 +132,9 @@
           showCancelButton: false,
           allowOutsideClick: false
         }).then(function() {
-          almacenarCompraExitosa(details.id, details.payer.name.given_name, '{{ total }}');
+          
           redirectToCategorias();
+            enviarBoletaPorCorreo();
         });
       });
     },
@@ -173,18 +210,36 @@
     var cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
     return cookieValue ? cookieValue.pop() : '';
   }
-  </script>
+
+  function enviarBoletaPorCorreo(orderId) {
+    //var ordenId = {{ request.session.orden_id }};
+    fetch('/petstore/enviar-boleta-por-correo/' + ordenId + '/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      // Aquí puedes manejar la respuesta del servidor si es necesario
+      console.log(data);
+    })
+    .catch(function(error) {
+      console.error('Error:', error);
+    });
+  }
   
-
-
-
-
+  </script>
     
 {% endblock %}
 
 {% block js %}
 
 <script src="{% static 'app/js/carrito.js' %}"></script>
+<script src="{% static 'app/js/api_geografia.js' %}"></script>
 
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 

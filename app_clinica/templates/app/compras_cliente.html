@@ -22,6 +22,8 @@
               <th>ID</th>
               <th>Número de Orden</th>
               <th>Estado</th>
+              <th>Boleta</th>
+              <th>Enviar por correo</th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +42,15 @@
                     <span class="text-success">Entregado</span>
                   {% endif %}
                 </td>
+                <td>
+                  <a href="{% url 'app_tienda:generar_boleta' orden.id %}" class="btn btn-link"><i class="fas fa-file-download"></i></a>
+                </td>
+                <td>
+                  <a href="{% url 'app_tienda:enviar_boleta_por_correo' orden_id=orden.id %}" class="btn btn-link">
+                    <i class="fa-solid fa-envelope"></i>
+                  </a>
+                </td>
+                
               </tr>
             {% endfor %}
           </tbody>
@@ -76,17 +87,6 @@
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 {% endblock dinamico %}

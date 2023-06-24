@@ -23,6 +23,7 @@ urlpatterns = [
     path('', include('app_clinica.urls')),
     path('petstore/', include('app_tienda.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api-geografia/', include('app_geografia.urls')),
 ]
 
 

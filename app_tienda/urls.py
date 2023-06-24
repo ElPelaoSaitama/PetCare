@@ -23,6 +23,7 @@ urlpatterns = [
     path('complete/', views.paymentComplete, name='complete'),
 
     path('compra-exitosa/', views.almacenar_compra_exitosa, name='compra_exitosa'),
-
+    path('generar_boleta/<int:orden_id>/', views.generar_boleta, name='generar_boleta'),
+    path('enviar-boleta-por-correo/<int:orden_id>/', views.enviar_boleta_por_correo, name='enviar_boleta_por_correo'),
 
 ]

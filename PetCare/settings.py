@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_clinica.apps.AppClinicaConfig',
     'app_tienda.apps.AppTiendaConfig',
+    'app_geografia',
     'widget_tweaks',
     'crispy_forms',
     'colorfield',
     'localflavor',
     'django.contrib.humanize',
+    'rest_framework',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"

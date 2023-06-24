@@ -7,3 +7,4 @@ django-widget-tweaks
 django-localflavor
 localflavor
 reportlab
+djangorestframework
