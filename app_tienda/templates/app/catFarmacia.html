@@ -22,13 +22,15 @@
            <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
             {% for p in productos %}
               <div class="col">
-                 <div class="card h-100 shadow-sm">
+                 <div class="card h-100 shadow-sm border-info">
                     {% if p.imagen %}
                     <img src="{{ p.imagen.url }}" alt="">
                     {% endif %}
+                    <hr class="border-info">
                     <div class="card-body">
                        <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio |intcomma }}</span> </div>
                        <h5 class="card-title">{{ p.nombre | title }}</h5>
+                       <p>Producto ID: {{ p.id }}</p>
                        <div class="text-center my-4"> 
                         <form method="post" action="{% url 'app_tienda:agregar_al_carrito' p.id %}">
                           {% csrf_token %}
