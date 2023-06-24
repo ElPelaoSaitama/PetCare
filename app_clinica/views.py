@@ -6,13 +6,15 @@ from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AgendamientoForm, ContactoForm, ClienteForm, ChangePasswordForm, MascotaForm, AgregarMascotaForm, DiagnosticoForm, EditarAgendamientoForm,EditAgendamientoColaborador,EditarClienteForm
-from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente, Agenda, Diagnostico
+from .models import Categoria, Veterinario, Peluquera, Mascota, Agendamiento, Cliente, Agenda, Diagnostico, Raza, Especie
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import datetime, date
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from django.db.models.functions import Upper
+from django.http import JsonResponse
+from django.views import View
 
 # importe para pdf
 from io import BytesIO
@@ -23,6 +25,7 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from app_tienda.models import Orden
 
 #importes para email
 from django.core.mail import EmailMessage
@@ -381,8 +384,6 @@ def editarPassword(request):
     context = {'form': form}
     return render(request, 'app/change_password.html', context)
 
-from app_tienda.models import Orden
-
 @login_required
 def compras_cliente(request):
     user = request.user
@@ -393,9 +394,28 @@ def compras_cliente(request):
     }
 
     return render(request, 'app/compras_cliente.html', data)
+ 
 
+from django.http import JsonResponse
 
+def obtener_razas(request):
+    especie_id = request.GET.get('especie_id')
+    print("Especie ID:", especie_id)  # Agregar este print para verificar el ID de la especie
+    if especie_id:
+        razas = Raza.objects.filter(especie_id=especie_id).values('id', 'nombre')
+        print("Razas:", razas)  # Agregar este print para verificar las razas obtenidas
+        return JsonResponse(list(razas), safe=False)
+    else:
+        return JsonResponse([], safe=False)
 
+        
+def get_razas(request):
+    especie_id = request.GET.get('especie_id')
+    especies = especies.objects.filter(
+        especie_id=especie_id,
+    )
+    options = {'id': especies.id}
+    return JsonResponse(options, safe=False)
 
 
 

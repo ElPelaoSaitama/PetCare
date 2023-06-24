@@ -8,3 +8,4 @@ django-localflavor
 localflavor
 reportlab
 djangorestframework
+requests

@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-v*6#^f8v!!=6ppwov2!_19%lb2h++f-p#_*&v)@&x5l^5=x9-v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['petcare.ddns.net']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['petcare.ddns.net']
+#ALLOWED_HOSTS = []
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
@@ -95,23 +95,23 @@ WSGI_APPLICATION = 'PetCare.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-"""DATABASES = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "petcare",
-        "USER": "petcare",
-        "PASSWORD": "SuperUsuario1#",
-        "HOST": "veterinariapetcare.mysql.database.azure.com",
+        "USER": "root",
+        "PASSWORD": "admin",
+        "HOST": "localhost",
         "PORT": "3306",
     }
-}"""
+}
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'petcaresqlite',
     }
-}
+}"""
 
 
 # Password validation
@@ -181,8 +181,8 @@ EMAIL_HOST_PASSWORD = 'tsbnnvdijldznurx'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
-#if DEBUG:
+if DEBUG:
     # Configuración del servidor de desarrollo
     # Cambiar el puerto a 80
-#    PORT = 80
-#    BIND = '0.0.0.0'
+    PORT = 80
+    BIND = '0.0.0.0'

@@ -48,7 +48,7 @@
         {% endfor %}
         <tr class="bg-light">
           <td colspan="3" class="text-right">Total:</td>
-          <td class="fw-bold" id="total">$ {{ total }}</td>
+          <td class="fw-bold" id="total">$ {{ total|floatformat:'-.2f' }}</td>
         </tr>
       </tbody>
     </table>
@@ -68,6 +68,16 @@
     <div id="direccionContainer" style="display: none;">
       <label for="direccion">Dirección de Despacho:</label>
       <input type="text" id="direccion" name="direccion" class="form-control">
+
+      <div class="form-group">
+        <label for="region">Region:</label>
+        <select id="region" class="form-control"></select>
+      </div>
+
+      <div class="form-group">
+        <label for="comunas">Comuna:</label>
+        <select id="comunas" class="form-control"></select>
+      </div>
     </div>
   
     <!-- Botón de Pago de PayPal -->
@@ -77,10 +87,7 @@
   
     <a href="{% url 'app_tienda:vaciar_carrito' %}" onclick="vaciarCarrito(event)" class="btn btn-danger">Vaciar Carrito</a>
 
-    <div class="form-group">
-      <label for="comunas">Comunas:</label>
-      <select id="comunas" class="form-control"></select>
-    </div>
+
 
   </div>
   
@@ -113,7 +120,7 @@
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: '{{ total }}', // Inserta aquí el valor total del carrito desde tu contexto
+            value: '{{ total|floatformat:'-.2f' }}', // Inserta aquí el valor total del carrito desde tu contexto
             currency_code: 'USD'
           }
         }]

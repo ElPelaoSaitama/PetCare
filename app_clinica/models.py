@@ -29,7 +29,7 @@ class Raza(models.Model):
     especie = models.ForeignKey(Especie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.nombre
+        return f'Raza: {self.nombre} - Especie: {self.especie}'
 
 # Tabla Categoria (Peluqueria / Operaciones / Consulta Medica)
 class Categoria(models.Model):

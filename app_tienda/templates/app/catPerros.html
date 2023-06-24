@@ -27,7 +27,7 @@
                     <img src="{{ p.imagen.url }}" alt="">
                     {% endif %}
                     <div class="card-body">
-                       <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio |intcomma }}</span> </div>
+                       <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio }}</span> </div>
                        <h5 class="card-title">{{ p.nombre | title }}</h5>
                        <p>Producto ID: {{ p.id }}</p>
 

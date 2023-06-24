@@ -22,6 +22,7 @@ urlpatterns = [
     path('nueva-mascota/',views.agregarMascota, name="agregar_mascota"),
     path('generar-pdf/<int:mascota_id>/', views.generar_pdf, name='generar_pdf'),
     path('compras/', views.compras_cliente, name='compras_cliente'),
+    path('obtener_razas/', views.get_razas, name='obtener_razas'),
     
     
     path('eliminar-agendamiento/<int:consulta_id>/', views.eliminarAgendamiento, name='eliminar_agendamiento'),
