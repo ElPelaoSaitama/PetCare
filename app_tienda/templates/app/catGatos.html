@@ -29,7 +29,13 @@
                     <div class="card-body">
                        <div class="clearfix mb-3"> <span class="float-start badge rounded-pill bg-primary">{{ p.marca | capfirst }}</span> <span class="float-end price-hp">&dollar;{{ p.precio |intcomma }}</span> </div>
                        <h5 class="card-title">{{ p.nombre | title }}</h5>
-                       <div class="text-center my-4"> <a href="#" class="btn btn-success">Comprar</a> </div>
+
+                       <div class="text-center my-4"> 
+                        <form method="post" action="{% url 'app_tienda:agregar_al_carrito' p.id %}">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                        </form>
+                       </div>
                     </div>
                  </div>
               </div>
