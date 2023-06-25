@@ -44,7 +44,7 @@ class Orden(models.Model):
     status = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.ordernum
+        return  f'{self.customer} - {self.ordernum}'
 
 class Orden_detail(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-v*6#^f8v!!=6ppwov2!_19%lb2h++f-p#_*&v)@&x5l^5=x9-v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['petcare.ddns.net']
+ALLOWED_HOSTS = ['petcare.ddns.net', 'veterinaria.serveftp.com']
 #ALLOWED_HOSTS = []
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
