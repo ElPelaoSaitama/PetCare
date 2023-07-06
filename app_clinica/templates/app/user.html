@@ -28,6 +28,14 @@
                 </a>
                 </div>
 
+                <div class="email" role="button" id="open-mascotas">
+                  <a href="{% url 'app_clinica:mascota_cliente' %}">
+                    <i class="fa-solid fa-paw"></i>
+                  <h4>Tús Mascotas</h4>
+                  <p>Ficha clinica de tus mascotas</p>
+                  </a>
+                </div>
+
                 <div class="address" role="button" id="open-historial">
                   <a href="{% url 'app_clinica:historial_medico' %}">
                     <i class="fa-solid fa-notes-medical"></i>
@@ -36,13 +44,7 @@
                   </a>
                 </div>
   
-                <div class="email" role="button" id="open-mascotas">
-                  <a href="{% url 'app_clinica:mascota_cliente' %}">
-                    <i class="fa-solid fa-paw"></i>
-                  <h4>Tús Mascotas</h4>
-                  <p>Ficha clinica de tus mascotas</p>
-                  </a>
-                </div>
+
 
                 <div class="email" role="button" id="open-compras">
                   <a href="{% url 'app_clinica:compras_cliente' %}">
