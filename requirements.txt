@@ -9,3 +9,4 @@ localflavor
 reportlab
 djangorestframework
 requests
+-U django-jazzmin
