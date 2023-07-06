@@ -47,7 +47,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Inicio",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        #{"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Ver Página", "url": "http://petcare.ddns.net/", "new_window": True},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},
